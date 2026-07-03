@@ -2,8 +2,9 @@
 from typing import Union, Optional
 from ffpresets import *
 from helpers import log, ConvertTime
+from Checkers import ffmpeg_Check
 from pathlib import Path
-import os, sys, shutil, json
+import os, json
 
 # ====================================================
 #                   Helper functions
@@ -22,27 +23,6 @@ def run(command : str, silent : bool = True, capture_output : bool = False, text
         log(silent, f"\033[31mn>> {command}\n\033[0m")
     #Run subprocess (params will be added as needed)
     return subprocess.run(command, shell=True, check=True, capture_output=capture_output, text=text)
-def ffmpeg_Check(terminate : bool = True) -> None :
-    '''Check if ffmpeg is exists in user's PC'''
-    ffexists = True
-    if shutil.which("ffmpeg") is None :
-        ffexists = False
-    try :
-        subprocess.run(
-            ["ffmpeg", "-version"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-        )
-    except :
-        ffexists = False
-    
-    if not ffexists :
-        print("\033[31m[Fatal] ffmpeg not found\n" \
-        "\033[38;5;50mon windows run \"winget install ffmpeg\"\n" \
-        "on debian based linux run \"sudo apt-get install ffmpeg\"\n" \
-        "then reboot the terminal to update the global enviroment\033[0m")
-        if terminate :
-            sys.exit(1)
 
 # ====================================================
 #                  helper / Analizer
