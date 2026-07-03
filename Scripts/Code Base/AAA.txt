@@ -1,0 +1,31 @@
+                        case Encoder.cwebp:
+                            OutPath = Path.ChangeExtension(InPath, "webp");
+                            switch (Ext)
+                            {
+                                case ".png" or ".bmp": // Lossless or raw image
+                                    encoderArgs.AddRange(["-quiet", "-q", "85", "-m", "6", "-mt", "-metadata", "all", "-sharp_yuv", InPath, "-o", OutPath]);
+                                    break;
+                                case ".jpg" or ".jxl" or ".jp2": // Lossy Compressed
+                                    encoderArgs.AddRange(["-quiet", "-q", "90", "-m", "6", "-mt", "-metadata", "all", "-sharp_yuv", InPath, "-o", OutPath]);
+                                    break;
+                                default: // Everything Else (Assume Light Lossy compression)
+                                    encoderArgs.AddRange(["-quiet", "-q", "90", "-m", "6", "-mt", "-metadata", "all", "-sharp_yuv", InPath, "-o", OutPath]);
+                                    break;
+                            }
+                            break;
+
+                        case Encoder.cjxl:
+                            OutPath = Path.ChangeExtension(InPath, "jxl");
+                            switch (Ext)
+                            {
+                                case ".png" or ".bmp": // Lossless or raw image
+                                    encoderArgs.AddRange(["-q", "85", "-e", "10", "--quiet", InPath, OutPath]);
+                                    break;
+                                case ".jpg" or ".jxl" or ".jp2": // Lossy Compressed
+                                    encoderArgs.AddRange(["-q", "90", "--lossless_jpeg=0", "-e", "10", "--quiet", InPath, OutPath]);
+                                    break;
+                                default: // Everything Else (Assume Light Lossy compression)
+                                    encoderArgs.AddRange(["-q", "90", "-e", "10", "--quiet", InPath, OutPath]);
+                                    break;
+                            }
+                            break;

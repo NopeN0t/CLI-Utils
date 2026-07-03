@@ -1,0 +1,36 @@
+Encoders
+ libaom-av1 		: aomenc.exe (3.13.0-rc1-69-gf2bfd0d38)
+ libsvtav1		: SvtAv1EncApp.exe (3.0.2-B)
+ libwebp 		: cwebp.exe (1.6.0)
+
+Partial / Full Libraries
+ libjxl (jpegxl)	: Version 0.11.2
+   Encoder 		: cjxl.exe
+   Decoder 		: djxl.exe
+   Prober		: jxlinfo.exe
+
+Optimizer
+ jpg/png 		: ect.exe
+ jpg 			: jpegoptim.exe / zopfli.exe
+ png 			: oxipng.exe / zopflipng.exe
+
+Script
+ Add this folder to PATH : AddToPath_CLI Utils.bat
+ Compress video 	: ffcomp.exe
+ Comapre Media 		: ffcompare.exe
+ Edit Media Cover 	: ffcover.exe
+ ff debugcode		: fffunctions.exe
+ list file type + size	: filelist.exe
+ Optimize Image 	: imgopt.exe
+ PDF <-> Image 		: mkpdf.exe
+ Restart Explorer 	: restartexplorer.bat
+ Convert To MP4		: tomp4.bat
+ Download YouTube video	: ytdl.ps1
+ Download YouTube audio : ytmdl.ps1
+
+
+Custom Code
+ Permission 		: escalate.exe
+ Pathdumping 		: PathDump.exe
+ File randomizer 	: Random.exe
+ 

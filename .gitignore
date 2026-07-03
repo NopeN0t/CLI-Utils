@@ -1,0 +1,10 @@
+#vscode folder
+.vscode/*
+
+#caches
+Scripts/__pycache__/*
+
+#Special Cases
+*.exe
+*.aes
+*.dll
