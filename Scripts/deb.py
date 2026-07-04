@@ -1,4 +1,2 @@
-from helpers import ImgCheck, InputPath, ImgCorrect
-fmt = InputPath("Input Path : ")
-print(ImgCheck(fmt))
-print(ImgCorrect(fmt))
+print("""This is debug file,
+      Write your own code heare.""")

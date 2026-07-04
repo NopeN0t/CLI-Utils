@@ -2,7 +2,7 @@
 .vscode/*
 
 #caches
-Scripts/__pycache__/*
+*__pycache__
 
 #Special Cases
 *.exe

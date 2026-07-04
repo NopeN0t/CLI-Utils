@@ -1,6 +1,6 @@
 import os, sys, shutil, argparse
-from fffunctions import * #Scary
-from helpers import GetFileSize, SizeToStr, Alert, InputPath
+from Functions.fffunctions import * #Scary
+from Functions.helpers import GetFileSize, SizeToStr, Alert, InputPath
 
 # ==========================
 # Functions

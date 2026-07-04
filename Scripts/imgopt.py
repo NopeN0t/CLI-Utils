@@ -1,5 +1,5 @@
 import os, subprocess, sys, argparse, time
-from helpers import Union, Path, SizeToStr, ConvertTime, Alert, InputPath, ImgCorrect, ImgCheck, IMG_CORRECTOR
+from Functions.helpers import Union, Path, SizeToStr, ConvertTime, Alert, InputPath, ImgCorrect, ImgCheck, IMG_CORRECTOR
 from multiprocessing import Pool, cpu_count
 from tqdm import tqdm
 PROGRAM = "imgopt"

@@ -1,5 +1,5 @@
-from fffunctions import Comparator, VAnalizer
-from helpers import Alert, InputPath
+from Functions.fffunctions import Comparator, VAnalizer
+from Functions.helpers import Alert, InputPath
 import sys, argparse
 if __name__ == "__main__" :
     try :

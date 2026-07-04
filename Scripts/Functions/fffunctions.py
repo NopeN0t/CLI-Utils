@@ -1,8 +1,8 @@
 #Universal Imports
 from typing import Union, Optional
-from ffpresets import *
-from helpers import log, ConvertTime
-from Checkers import ffmpeg_Check
+from Functions.ffpresets import *
+from Functions.helpers import log, ConvertTime
+from Functions.Checkers import ffmpeg_Check
 from pathlib import Path
 import os, json
 
@@ -670,7 +670,7 @@ class AudioHelper() :
 # ====================================================
 if __name__ == "__main__" :
     print("fffunctions debug code")
-    from helpers import InputPath
+    from Scripts.Functions.helpers import InputPath
 
     f = InputPath("Input Path : ")
     v_info = VAnalizer(f)
