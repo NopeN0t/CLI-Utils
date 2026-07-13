@@ -23,3 +23,7 @@ class ConsoleColors :
     # Info and Highlight
     INFO = "\033[38;5;40m"  # Green, but could be anything
     HIGHLIGHT = f"{YELLOW}\033[1m"  # Yellow with bold
+    
+    def SetColor(COLOR) :
+        '''This is no difference from inserting color into regular print'''
+        print(COLOR, end='')
