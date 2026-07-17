@@ -6,7 +6,7 @@ class ConsoleColors :
     BLACK = "\033[38;5;16m"
     RED = "\033[38;5;196m"
     GREEN = "\033[38;5;40m"
-    YELLOW = "\033[38;5;226m"  # This is the one you asked about earlier!
+    YELLOW = "\033[38;5;226m"
     BLUE = "\033[38;5;12m"
     PURPLE = "\033[38;5;128m"
     CYAN = "\033[38;5;50m"
@@ -24,6 +24,6 @@ class ConsoleColors :
     INFO = "\033[38;5;40m"  # Green, but could be anything
     HIGHLIGHT = f"{YELLOW}\033[1m"  # Yellow with bold
     
-    def SetColor(COLOR) :
+    def SetColor(COLOR) : # type: ignore
         '''This is no difference from inserting color into regular print'''
         print(COLOR, end='')

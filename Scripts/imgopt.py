@@ -1,15 +1,22 @@
 import os, subprocess, sys, argparse, time
 from Functions.helpers import Union, Path, SizeToStr, ConvertTime, Alert, InputPath, ImgCorrect, ImgCheck, IMG_CORRECTOR
+from Colors.ConsoleColors import ConsoleColors as CC
 from multiprocessing import Pool, cpu_count
 from tqdm import tqdm
 PROGRAM = "imgopt"
 WORKERS = cpu_count() - 2 if cpu_count() > 2 else 1 #Left threads unused to prevent global OS lag
 #External Programs
-#fffunctions.py
+#Functions.helpers.py
+#Colors.ConsoleColors.py
 #oxipng.exe
 #ect.exe
 #jpegoptim.exe 
 #cwebp.exe (libwebp)
+
+def log(msg : str, Color = CC.RESET) -> None :
+    print(f"{Color}[{PROGRAM}] {msg}{CC.RESET}")
+def Print_Stat(text : str, base : int, opt : int) -> None :
+    print(f"{CC.CYAN}[{PROGRAM}] {text} : {SizeToStr(opt)} / {SizeToStr(base)} ({SizeToStr(base - opt)} : {round((opt / base)*100, 4)}%){CC.RESET}")
 
 def ect_optimize(file : Union[str, Path]) :
     return run(["ect", "-9", "--disable-jpg", "-quiet", "-keep", file])
@@ -56,8 +63,6 @@ def ActualType(path : Union[str, Path]) :
         return "webp"
     
     return "unknown"
-def Print_Stat(text : str, base : int, opt : int) -> None :
-    print(f"\033[38;5;50m[{PROGRAM}] {text} : {SizeToStr(opt)} / {SizeToStr(base)} ({SizeToStr(base - opt)} : {round((opt / base)*100, 4)}%)\033[0m")
 
 def main() :
     #THIS PROGRAM ONLY OPTIMIZE LOSSLESSLY
@@ -75,9 +80,7 @@ def main() :
     parser.add_argument("-nc", "--nocheck", action="store_true", help="Skip extension checking process")
     args = parser.parse_args()
     
-    FOLDER = args.input
-    if FOLDER == "" :
-        FOLDER = InputPath("Enter folder to optimize : ")
+    FOLDER = InputPath("Enter folder to optimize : ") if args.input == "" else args.input
     FOLDER = os.path.abspath(InputPath(FOLDER,True).removesuffix('"'))
 
     if not os.path.isdir(FOLDER) :
@@ -130,15 +133,17 @@ def main() :
                 if args.detect :
                     print(f_path)
 
-    print(f"\033[38;5;226m[{PROGRAM}] Files found : {FILES['total']} ({SizeToStr(BASE_SIZE['total'])})\n"
-          f"[{PROGRAM}] PNG {len(FILES['png'])} ({SizeToStr(BASE_SIZE['png'])}) : JPG {len(FILES['jpg'])} ({SizeToStr(BASE_SIZE['jpg'])}) : WEBP (lossless) {len(FILES['webp'])} ({SizeToStr(BASE_SIZE['webp'])})\033[0m")
+    log(f"Files found : {FILES['total']} ({SizeToStr(BASE_SIZE['total'])})", CC.YELLOW)
+    log(f"PNG {len(FILES['png'])} ({SizeToStr(BASE_SIZE['png'])}) "
+        f": JPG {len(FILES['jpg'])} ({SizeToStr(BASE_SIZE['jpg'])}) "
+        f": WEBP (lossless) {len(FILES['webp'])} ({SizeToStr(BASE_SIZE['webp'])})", CC.YELLOW)
     if args.detect :
         return
     
     if len(FILES["png"]) > 0 :
         #PNG phase 1
-        print(f"\033[38;5;46m[{PROGRAM}] Processing PNGs Phase 1\033[0m\n"
-              f"\033[31mn>> oxipng -o max --strip none --fix -p *.png\033[0m")
+        log("Processing PNGs Phase 1",CC.INFO)
+        log("n>> oxipng -o max --strip none --fix -p *.png", CC.RED)
 
         with Pool(2) as pool :
             for _ in tqdm(pool.imap_unordered(oxipng_optimize, FILES["png"]), "PNG Phase 1", len(FILES["png"]), unit="files") :
@@ -149,8 +154,8 @@ def main() :
         #PNG phase 2
         tmp = OPT_SIZE["png"]
         OPT_SIZE["png"] = 0
-        print(f"\033[38;5;46m[{PROGRAM}] Processing PNGs Phase 2\033[0m\n"
-              f"\033[31mn>> ect -9 --disable-jpg -keep [files]\033[0m")
+        log("Processing PNGs Phase 2", CC.INFO)
+        log("n>> ect -9 --disable-jpg -keep [files]", CC.RED)
     
         with Pool(WORKERS) as pool:
             for _ in tqdm(pool.imap_unordered(ect_optimize, FILES["png"]), "PNG Phase 2", len(FILES["png"]), unit="files"):
@@ -160,8 +165,9 @@ def main() :
         
     if len(FILES["jpg"]) > 0 :
         #JPG phase 1
-        print(f"\033[38;5;46m[{PROGRAM}] Processing JPGs\033[0m\n"
-              f"\033[31mn>> jpegoptim --strip-none --all-progressive -p *.jpg\033[0m")
+        log("Processing JPGs", CC.INFO)
+        log("n>> jpegoptim --strip-none --all-progressive -p *.jpg", CC.RED)
+
         with Pool(WORKERS) as pool :
             for _ in tqdm(pool.imap_unordered(jpeg_optimize, FILES["jpg"]), "JPG Phase 1", len(FILES["jpg"]), unit="files") :
                 OPT_SIZE["jpg"] += os.path.getsize(_)
@@ -170,8 +176,8 @@ def main() :
 
     if len(FILES["webp"]) > 0 :
         #WEBP phase 1
-        print(f"\033[38;5;46m[{PROGRAM}] Processing WEBPs\033[0m\n"
-              f"\033[31mn>> cwebp -lossless -z 9 -m 6 -metadata all [input.webp] -o [output.webp]\033[0m")
+        log("Processing WEBPs", CC.INFO)
+        log("n>> cwebp -lossless -z 9 -m 6 -metadata all [input.webp] -o [output.webp]", CC.RED)
         
         for _ in tqdm(FILES["webp"], "WEBP Phase 1", len(FILES["webp"]), unit="files") :
             tmp = _ + ".tmp.webp"
@@ -186,10 +192,10 @@ def main() :
         Print_Stat("WEBP Phase 1 Completed", BASE_SIZE["webp"], OPT_SIZE["webp"])
     
     OPT_SIZE["total"] += OPT_SIZE["jpg"] + OPT_SIZE["png"] + OPT_SIZE["webp"]
-    print(f"\033[38;5;226m[{PROGRAM}] Total Files : {FILES['total']}\n"
-          f"[{PROGRAM}] PNG {len(FILES['png'])} : JPG {len(FILES['jpg'])} : WEBP (lossless) {len(FILES['webp'])}\n"
-          f"[{PROGRAM}] Space Saved : {SizeToStr(OPT_SIZE['total'])} / {SizeToStr(BASE_SIZE['total'])} "
-          f"({SizeToStr(BASE_SIZE['total'] - OPT_SIZE['total'])} : {round((OPT_SIZE['total'] / BASE_SIZE['total'])*100, 4)}%)\033[0m")
+    log(f"Total Files : {FILES['total']}", CC.YELLOW)
+    log(f"PNG {len(FILES['png'])} : JPG {len(FILES['jpg'])} : WEBP (lossless) {len(FILES['webp'])}", CC.YELLOW)
+    log(f"Space Saved : {SizeToStr(OPT_SIZE['total'])} / {SizeToStr(BASE_SIZE['total'])} "
+        f"({SizeToStr(BASE_SIZE['total'] - OPT_SIZE['total'])} : {round((OPT_SIZE['total'] / BASE_SIZE['total'])*100, 4)}%)", CC.YELLOW)
 
 if __name__ == "__main__":
     try :
@@ -199,8 +205,8 @@ if __name__ == "__main__":
     except KeyboardInterrupt :
         sys.exit(-1)
     except Exception as e:
-        print(f"[{PROGRAM}] An error has occored\n{e}\033[0m")
+        log(f"An error has occored\n{e}")
         sys.exit(-1)
     finally :
-        print(f"\033[38;5;226m[{PROGRAM}] Time Taken (Menuing Counts) Time taken {ConvertTime(START, time.perf_counter())}\033[0m")
+        log(f"Time Taken (Menuing Counts) Time taken {ConvertTime(START, time.perf_counter())}", CC.YELLOW)
         Alert()
