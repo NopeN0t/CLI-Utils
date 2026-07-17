@@ -223,7 +223,7 @@ class VAnalizer() :
 # ====================================================
 import mimetypes, struct, base64
 
-def Extract_Cover(file_path : Union[str, Path], cover_path : Union[str, Path], silent : bool = False, hide_command : bool = False) -> int :
+def Extract_Cover(file_path : Union[str, Path], cover_path : Union[str, Path], silent : bool = False, hide_command : bool = False) -> Union[int, None] :
     '''
     Extract cover from a file to provided path
 
@@ -276,7 +276,7 @@ def Remove_Cover(file_path : Union[str, Path], output : Optional[Union[str, Path
     :return: Where output is generated
     :rtype: Path
     '''
-    if not file_path.lower().endswith(COVER_FORMATS) :
+    if not str(file_path).lower().endswith(COVER_FORMATS) :
         raise NotImplementedError("[RemoveCover] this file format is not supported")
     
     # ignore if it aready is
@@ -297,7 +297,7 @@ def Remove_Cover(file_path : Union[str, Path], output : Optional[Union[str, Path
         os.remove("./tmp.ffmeta")
     elif SUFFIX == ".mp4" : #Process mp4
         run(f'{FFMPEG} -v error -i "{file_path}" {COVER_PRESETS_REMOVE['MP4']} "{OUTPUT}"',hide_command)
-    return Path(OUTPUT)
+    return Path(str(OUTPUT))
 
 def Add_Cover(file_path : Union[str, Path], image_path : Union[str, Path], output : Optional[Union[str, Path]] = None, hide_command = False) -> Path :
     '''
@@ -314,12 +314,12 @@ def Add_Cover(file_path : Union[str, Path], image_path : Union[str, Path], outpu
     :return: Where output is generated
     :rtype: Path
     '''
-    if not file_path.lower().endswith(COVER_FORMATS) :
+    if not str(file_path).lower().endswith(COVER_FORMATS) :
         raise NotImplementedError("[AddCover] this file format is not supported")
     
     #Make an jpg cover (Some options embed cover to the file)
     if not os.path.basename(image_path).lower().endswith(".jpg") :
-        tmppath = image_path.replace((os.path.basename(image_path)), "cover.jpg") #Some format requried the file to be named cover.jpg
+        tmppath = image_path.replace(os.path.basename(image_path), "cover.jpg") # type: ignore Some format requried the file to be named cover.jpg
         run(f'{FFMPEG} -v error -i "{image_path}" -q:v 1 "{tmppath}"', hide_command) #convert image (this make image on base_path not res)
         image_path = tmppath #Re-route image_path
     # ignore if it aready is
@@ -335,7 +335,7 @@ def Add_Cover(file_path : Union[str, Path], image_path : Union[str, Path], outpu
         run(f'{FFMPEG} -v error -i "{file_path}" -i "{image_path}" {COVER_PRESETS_ADD["FLAC"]} "{OUTPUT}"',hide_command)
     elif SUFFIX == ".ogg" or SUFFIX == ".opus": #Process ogg / opus
         try : #Embed the cover into the file
-            Metadata_block_cover(image_path)
+            Metadata_block_cover(str(image_path))
             run(f'{FFMPEG} -v error -i "{file_path}" -i "./tmp.ffmeta" -map 0:a -map_metadata 1 -c copy "{OUTPUT}"', hide_command)
             os.remove("./tmp.ffmeta")
         except :
@@ -343,7 +343,7 @@ def Add_Cover(file_path : Union[str, Path], image_path : Union[str, Path], outpu
             run(f'{FFMPEG} -v error -i "{file_path}" {COVER_PRESETS_ADD["OGG/OPUS"]} "{OUTPUT}"', hide_command) #Non embed version
     elif SUFFIX == ".mp4" :
         run(f'{FFMPEG} -v error -i "{file_path}" -i "{image_path}" {COVER_PRESETS_ADD['MP4']} "{OUTPUT}"',hide_command)
-    return Path(OUTPUT)
+    return Path(str(OUTPUT))
 def Metadata_block_cover(cover_path: str) -> None:
     '''Generate Metadata block for cover art'''
     cover = Path(cover_path)
@@ -412,6 +412,8 @@ class V_Optimizer :
             return 46 #Safe range (This keep simple fade+statc from breaking)
         elif self.v_codec in Sets[51] :
             return 36 #Safe range 
+        else :
+            return 42 #Assume this on all other formats
     def Is1Frame(self, in_path : Union[str, Path], out_path : Union[str, Path]) -> bool :
         '''
         Check if video is actually static the kind that 1 frame will do\n
@@ -635,7 +637,7 @@ class V_Optimizer :
 class AudioHelper() :
     def __init__(self):
         pass
-    def UncompressedToFLAC(input : Union[str, Path], replace : bool = True, silent : bool = False) -> None:
+    def UncompressedToFLAC(self, input : Union[str, Path], replace : bool = True, silent : bool = False) -> None:
         '''
         Convert uncompressed audio files to flac files\n
         This always process every file in given directory\n

@@ -18,8 +18,8 @@ def main() :
         BASE_DIR = BASE_DIR.replace(os.path.basename(BASE_DIR), "") #Remove Filename part
     BASE_DIR = os.path.abspath(InputPath(BASE_DIR,True).removesuffix('"')) #Force Absloute Path
 
-    FILES = {}
-    SIZES = {}
+    FILES : dict[str, int] = {}
+    SIZES : dict[str, int] = {}
 
     for root,folder,names in os.walk(BASE_DIR) :
         print(f"\033[38;5;50m   Processing {root}\033[0m")
@@ -38,7 +38,7 @@ def main() :
     total_f = 0
     total_s = 0
     SIZES_SORT = {}
-    for key in sorted(SIZES, key=SIZES.get, reverse=args.reverse):
+    for key in sorted(SIZES, key=SIZES.get, reverse=args.reverse): # type: ignore
         SIZES_SORT[key] = SIZES[key]
 
     for key in SIZES_SORT :  

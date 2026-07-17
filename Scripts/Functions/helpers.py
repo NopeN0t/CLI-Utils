@@ -6,12 +6,14 @@ import sys, os
 IMG_CORRECTOR = ['png', 'jpg', 'jp2', 'jxl', 'gif', 'bmp', 'ico',
                'psd', 'tiff', 'webp', 'heic', 'heif', 'avif', 'svg']
 #File helpers
-def SizeToStr(size : int) -> str:
-    """ Convert bytes to KB, or MB or GB"""
+def SizeToStr(size : float) -> str:
+    """ Convert bytes to KB, or MB or GB returns -1 if something went wrong"""
     for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
         if size < 1024.0:
             return "%3.1f %s" % (size, x)
         size /= 1024.0
+    return "-1"
+
 def GetFileSize(filepath : Union[str, Path]) -> str :
     return SizeToStr(os.path.getsize(filepath))
 def ImgCheck(file : Union[str, Path]) :
@@ -65,7 +67,7 @@ def ImgCheck(file : Union[str, Path]) :
         return "svg"
 
     return "unknown"
-def ImgCorrect(file : Union[str, Path], img_type : Optional[str] = None) :
+def ImgCorrect(file : Union[str, Path], img_type : Optional[str] = None) -> Path:
     '''
     Check and correct image ext
     
@@ -73,6 +75,8 @@ def ImgCorrect(file : Union[str, Path], img_type : Optional[str] = None) :
     :type file: Union[str, Path]
     :param img_type: Image Format (Skips Checking)
     :type img_type: Optional[str]
+    :return: Input path with/without extendtion changes
+    :rtype: Path
     '''
     EXT = Path(file).suffix.lower().lstrip('.')
     if img_type == None :
@@ -82,7 +86,7 @@ def ImgCorrect(file : Union[str, Path], img_type : Optional[str] = None) :
         new_path = base + "." + img_type
         os.rename(file,new_path) #This Overwrite Files (If it does you probably want to anyways)
         file = new_path
-    return file
+    return Path(file)
 
 #Converters
 def ConvertTime(start : float, end : float) -> str :
@@ -94,7 +98,7 @@ def ConvertTime(start : float, end : float) -> str :
     :return: More readable version of time
     :rtype: str
     '''
-    return timedelta(seconds=round((end - start), 4))
+    return str(timedelta(seconds=round((end - start), 4)))
 
 #Input helpers
 def InputPath(info : str, process_text : bool = False) -> str :

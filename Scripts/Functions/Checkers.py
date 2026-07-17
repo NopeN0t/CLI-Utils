@@ -22,7 +22,7 @@ def __ProgramExists(process : str, params : list) -> bool :
 
     return True
 
-def ffmpeg_Check(terminate : bool = True) -> None :
+def ffmpeg_Check(terminate : bool = True) -> bool :
     '''Check if ffmpeg exists in user's PC'''
 
     if not __ProgramExists("ffmpeg", ["ffmpeg", "-version"]) :
@@ -32,8 +32,10 @@ def ffmpeg_Check(terminate : bool = True) -> None :
         "   then reboot the terminal to update the global enviroment\033[0m")
         if terminate :
             sys.exit(1)
+        return False
+    return True
 
-def exiftool_Check(terminate : bool = True) -> None :
+def exiftool_Check(terminate : bool = True) -> bool :
     '''Check if exiftool exists in user's PC'''
 
     if not __ProgramExists("exiftool", ["exiftool", "-ver"]) :
@@ -42,3 +44,5 @@ def exiftool_Check(terminate : bool = True) -> None :
         "   then reboot the terminal to update the global enviroment\033[0m")
         if terminate :
             sys.exit(1)
+        return False
+    return True
