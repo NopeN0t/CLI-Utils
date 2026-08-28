@@ -434,7 +434,7 @@ class V_Optimizer :
         if frames <= 2 :
             print(f"\033[38;5;50m[Optimizer] True Static Video Detected, Optimizing For Static Video\033[0m")
             run(f'{FFMPEG} -v fatal -i "{in_path}" -map_metadata 0 -c copy "1Frame_Base.mp4"') #This remove things like cover
-            run(f'{FFMPEG} -v fatal -stats -i "1Frame_Base.mp4" -map_metadata 0 -map 0 -vf mpdecimate -vsync vfr'
+            run(f'{FFMPEG} -v fatal -stats -i "1Frame_Base.mp4" -map_metadata 0 -map 0 -vf mpdecimate -fps_mode vfr'
                 f' -c:s copy -c:d copy -c:a {self.a_codec} {self.a_param} -c:v libaom-av1 -cpu-used 1 -pix_fmt yuv420p10le -still-picture 1 -crf 38 -b:v 0 '
                 f'"{out_path}"', True)
             os.remove("1Frame_Base.mp4")

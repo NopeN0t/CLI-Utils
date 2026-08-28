@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 from Colors.ConsoleColors import ConsoleColors as CC
-from Functions.Checkers import Custom_Checker, exiftool_Check #exiftoo_check is there for external import
+from Functions.Checkers import Custom_Checker, exiftool_Check #exiftool_check is there for external import
 
 
 @dataclass(frozen=True)
@@ -42,3 +42,10 @@ class Supports(Enum):
     @classmethod
     def formats(cls) -> list[str]:
         return [support.name.lower() for support in cls]
+
+    @classmethod
+    def check_format(cls, format: str) -> bool:
+        try:
+            return cls[format.upper()].check()
+        except KeyError:
+            return False

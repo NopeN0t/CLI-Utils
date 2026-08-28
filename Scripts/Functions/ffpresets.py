@@ -13,7 +13,7 @@ VIDEO_PRESETS = {
     #libaom-av1 -cpu-used 7 -b:v 0 -crf 32 -auto-alt-ref 1 -arnr-maxframes 3 -arnr-strength 2 -tile-columns 2 -row-mt 1 -lag-in-frames 12 -g 600 -keyint_min 10 -pix_fmt yuv420p10le
     "av1_veryslow+ 48fps max VFR 420 10bit" :{ # Smallest file Extreme edition
         "codec": "libaom-av1",
-        "params": f"-cpu-used 6 -b:v 0 -crf 32 -auto-alt-ref 1 -arnr-maxframes 7 -arnr-strength 4 -lag-in-frames 48 -enable-tx64 1 -tile-columns 1 -row-mt 1 -g 600 -pix_fmt yuv420p10le -vf \"fps=min(source_fps\\,48),mpdecimate=hi=128:lo=32:frac=0.00005\" -vsync vfr"
+        "params": f"-cpu-used 6 -b:v 0 -crf 32 -auto-alt-ref 1 -arnr-maxframes 7 -arnr-strength 4 -lag-in-frames 48 -enable-tx64 1 -tile-columns 1 -row-mt 1 -g 600 -pix_fmt yuv420p10le -vf \"fps=min(source_fps\\,48),mpdecimate=hi=128:lo=32:frac=0.00005\" -fps_mode vfr"
     }, 
     "av1_veryslow+ 48fps max 420 10bit" :{ # Smallest file Semi Extreme edition
         "codec": "libaom-av1",
@@ -21,7 +21,7 @@ VIDEO_PRESETS = {
     }, 
      "av1_veryslow+ VFR 420 10bit" :{ # Smallest file no dupe edition
         "codec": "libaom-av1",
-        "params": f"-cpu-used 6 -b:v 0 -crf 32 -auto-alt-ref 1 -arnr-maxframes 7 -arnr-strength 4 -lag-in-frames 48 -enable-tx64 1 -tile-columns 1 -row-mt 1 -g 600 -pix_fmt yuv420p10le -vf \"mpdecimate=hi=128:lo=32:frac=0.00005\" -vsync vfr"
+        "params": f"-cpu-used 6 -b:v 0 -crf 32 -auto-alt-ref 1 -arnr-maxframes 7 -arnr-strength 4 -lag-in-frames 48 -enable-tx64 1 -tile-columns 1 -row-mt 1 -g 600 -pix_fmt yuv420p10le -vf \"mpdecimate=hi=128:lo=32:frac=0.00005\" -fps_mode vfr"
     },    
     "av1_veryslow+ 420 10bit" :{ # Smallest file (cpu 6 so the speed is actually usable)
         "codec": "libaom-av1",

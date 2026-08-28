@@ -29,13 +29,13 @@ def ImgCheck(file : Union[str, Path]) :
         "jpg" : [b"\xFF\xD8\xFF"],
         "jp2" : [b"\x00\x00\x00\x0CjP  \r\n\x87\n"],
         "jxl" : [b"\xFF\x0A", b"\x00\x00\x00\x0C\x4A\x58\x4C\x20\x0D\x0A\x87\x0A"],
-        "gif" : [b"GIF"],
+        "gif": [b"GIF87a", b"GIF89a"],
         "bmp" : [b"BM"],
         "ico" : [b"\x00\x00\x01\x00"],
         "psd" : [b"8BPS"],
         "tiff" : [b"II*\x00", b"MM\x00*"],
     }
-    if not file.exists() or file.stat().st_size < 12 : #File doesn't exist or too small
+    if not file.exists() or file.stat().st_size < 12 : #File doesn't exist or too small (Minimum usable image is ~30bytes)
         return "unknown"
     
     with open(file, "rb") as f: #Extract file header
