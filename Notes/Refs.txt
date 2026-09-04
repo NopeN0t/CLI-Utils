@@ -4,15 +4,18 @@ Encoders
  libwebp 		: cwebp.exe (1.6.0)
 
 Partial / Full Libraries
- libjxl (jpegxl)	: Version 0.11.2
+ libjxl (jpegxl)	: Version 0.12.0
    Encoder 		: cjxl.exe
    Decoder 		: djxl.exe
    Prober		: jxlinfo.exe
 
 Optimizer
- jpg/png 		: ect.exe
+ jpg/png 		: ect.exe (Zen3 Optimized)
  jpg 			: jpegoptim.exe / zopfli.exe
  png 			: oxipng.exe / zopflipng.exe
+
+Others
+ ninja			: ninja build tool
 
 Script
  Add this folder to PATH : AddToPath_CLI Utils.bat

@@ -1,8 +1,8 @@
 import shutil
 import sys, os
 from Functions.helpers import Union, Optional, Path, InputPath, Selector, Alert
-from Functions.ffpresets import COVER_FORMATS
-from Functions.fffunctions import AudioHelper, Add_Cover, Extract_Cover, Remove_Cover, ffmpeg_Check
+from Projects.fftools.ffpresets import COVER_FORMATS
+from Projects.fftools.fffunctions import AudioHelper, Add_Cover, Extract_Cover, Remove_Cover, ffmpeg_Check
 
 def process(Mode : int, hide_command : bool = True) -> bool:
     F_INPUT, F_OUTPUT, IMAGE = GetPaths(True) if Mode == 1 else GetPaths()

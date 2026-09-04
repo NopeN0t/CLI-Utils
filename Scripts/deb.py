@@ -1,4 +1,5 @@
 from Colors.ConsoleColors import ConsoleColors as CC
+from Functions.Checkers import Custom_Checker
 print(
     f"This is debug file, Write your own code here.\n\n"
     f"Color Samples form ConsoleColors.py\n"
@@ -12,8 +13,4 @@ print(
     LocateImages(
         [r"C:\Users\USER\Pictures\T", r"C:\Users\USER\Pictures\T\B"], True
     )
-# ProcessPaths(
-#     ["D:/4-Projects/CLI Utils/Scripts", "D:/4-Projects/CLI Utils/Scripts/Projects", 
-#      r"C:\Users\USER\Pictures\Camera Roll\WIN_20210115_15_47_59_Pro.jpg"],
-#     True)
 )
