@@ -1,10 +1,31 @@
 from dataclasses import dataclass
+from pathlib import Path
 from enum import Enum
 
 @dataclass
 class EncoderPreset:
     encoder: str
     params: tuple[str, ...]
+
+    def command(self, input_path: Path, output_path: Path) -> list[str]:
+        if self.encoder == "cwebp":
+            return [
+                self.encoder,
+                *self.params,
+                str(input_path),
+                "-o",
+                str(output_path),
+            ]
+
+        if self.encoder == "cjxl":
+            return [
+                self.encoder,
+                str(input_path),
+                str(output_path),
+                *self.params,
+            ]
+
+        raise ValueError(f"Unknown encoder: {self.encoder}")
 
 class Encoder_Presets(Enum):
     JXL_Default = EncoderPreset(
@@ -49,7 +70,8 @@ class Encoder_Presets(Enum):
         except KeyError:
             raise ValueError(f"Preset not found: {key}")
 
-    def get_args(preset : EncoderPreset) -> list :
+    @classmethod
+    def get_args(cls, preset : EncoderPreset) -> list :
         """
         Converts Preset to list of argument for easier uses.
         """
