@@ -50,7 +50,7 @@ A comprehensive CLI utility suite for media processing, file management, and sys
 
 ### Python Dependencies
 ```bash
-pip install pillow==12.3.0 pymupdf==1.28.2 tqdm==4.70.1
+pip install pillow>=12.3.0 pymupdf>=1.28.2 tqdm>=4.70.1 yt-dlp
 ```
 
 ### External Programs (Required)
@@ -61,13 +61,15 @@ pip install pillow==12.3.0 pymupdf==1.28.2 tqdm==4.70.1
 | `exiftool` | Metadata extraction | `winget install exiftool` |
 
 ### Optional Programs (Enhanced Features)
+- Some script still requried them though
+
 | Program | Purpose |
 |---------|---------|
 | `oxipng.exe` | PNG optimization |
 | `jpegoptim.exe` | JPEG optimization |
-| `cwebp.exe` | WEBP compression |
+| `cwebp.exe` | WEBP conversion |
 | `cjxl.exe` | JPEG-XL conversion |
-| `ect.exe` | EXIF extraction |
+| `ect.exe` | PNG optimization |
 
 ## 🚀 Installation
 
@@ -142,7 +144,6 @@ winget install exiftool
 
 # Optional: Image optimizers
 winget install oxipng
-winget install zopfli
 
 # Verify installations
 ffmpeg -version

@@ -13,6 +13,9 @@ pymupdf>=1.28.2
 # Progress Bar
 tqdm>=4.70.1
 
+# Youtube downloader
+yt-dlp
+
 # =============================================================================
 # OPTIONAL/EXTERNAL PROGRAMS (NOT Python packages)
 # =============================================================================

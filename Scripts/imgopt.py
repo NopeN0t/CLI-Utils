@@ -139,57 +139,69 @@ def main() :
         f": WEBP (lossless) {len(FILES['webp'])} ({SizeToStr(BASE_SIZE['webp'])})", CC.YELLOW)
     if args.detect :
         return
-    
+
     if len(FILES["png"]) > 0 :
-        #PNG phase 1
-        log("Processing PNGs Phase 1",CC.INFO)
-        log("n>> oxipng -o max --strip none --fix -p *.png", CC.RED)
+        try :
+            #PNG phase 1
+            log("Processing PNGs Phase 1",CC.INFO)
+            log("n>> oxipng -o max --strip none --fix -p *.png", CC.RED)
 
-        with Pool(2) as pool :
-            for _ in tqdm(pool.imap_unordered(oxipng_optimize, FILES["png"]), "PNG Phase 1", len(FILES["png"]), unit="files") :
-                OPT_SIZE["png"] += os.path.getsize(_)
+            with Pool(2) as pool :
+                for _ in tqdm(pool.imap_unordered(oxipng_optimize, FILES["png"]), "PNG Phase 1", len(FILES["png"]), unit="files") :
+                    OPT_SIZE["png"] += os.path.getsize(_)
 
-        Print_Stat("PNG Phase 1 Completed", BASE_SIZE["png"], OPT_SIZE["png"])
+            Print_Stat("PNG Phase 1 Completed", BASE_SIZE["png"], OPT_SIZE["png"])
+        except Exception as e :
+            log(f"Error {e}", CC.RED)
 
-        #PNG phase 2
-        tmp = OPT_SIZE["png"]
-        OPT_SIZE["png"] = 0
-        log("Processing PNGs Phase 2", CC.INFO)
-        log("n>> ect -9 --disable-jpg -keep [files]", CC.RED)
-    
-        with Pool(WORKERS) as pool:
-            for _ in tqdm(pool.imap_unordered(ect_optimize, FILES["png"]), "PNG Phase 2", len(FILES["png"]), unit="files"):
-                OPT_SIZE["png"] += os.path.getsize(_)
+        try :
+            #PNG phase 2
+            tmp = OPT_SIZE["png"]
+            OPT_SIZE["png"] = 0
+            log("Processing PNGs Phase 2", CC.INFO)
+            log("n>> ect -9 --disable-jpg -keep [files]", CC.RED)
 
-        Print_Stat("PNG Phase 2 Completed", tmp, OPT_SIZE["png"])
+            with Pool(WORKERS) as pool:
+                for _ in tqdm(pool.imap_unordered(ect_optimize, FILES["png"]), "PNG Phase 2", len(FILES["png"]), unit="files"):
+                    OPT_SIZE["png"] += os.path.getsize(_)
+
+            Print_Stat("PNG Phase 2 Completed", tmp, OPT_SIZE["png"])
+        except Exception as e :
+            log(f"Error {e}", CC.RED)
         
     if len(FILES["jpg"]) > 0 :
-        #JPG phase 1
-        log("Processing JPGs", CC.INFO)
-        log("n>> jpegoptim --strip-none --all-progressive -p *.jpg", CC.RED)
+        try :
+            #JPG phase 1
+            log("Processing JPGs", CC.INFO)
+            log("n>> jpegoptim --strip-none --all-progressive -p *.jpg", CC.RED)
 
-        with Pool(WORKERS) as pool :
-            for _ in tqdm(pool.imap_unordered(jpeg_optimize, FILES["jpg"]), "JPG Phase 1", len(FILES["jpg"]), unit="files") :
-                OPT_SIZE["jpg"] += os.path.getsize(_)
+            with Pool(WORKERS) as pool :
+                for _ in tqdm(pool.imap_unordered(jpeg_optimize, FILES["jpg"]), "JPG Phase 1", len(FILES["jpg"]), unit="files") :
+                    OPT_SIZE["jpg"] += os.path.getsize(_)
 
-        Print_Stat("JPG Phase 1 Completed", BASE_SIZE["jpg"], OPT_SIZE["jpg"])
+            Print_Stat("JPG Phase 1 Completed", BASE_SIZE["jpg"], OPT_SIZE["jpg"])
+        except Exception as e :
+            log(f"Error {e}", CC.RED)
 
     if len(FILES["webp"]) > 0 :
-        #WEBP phase 1
-        log("Processing WEBPs", CC.INFO)
-        log("n>> cwebp -lossless -z 9 -m 6 -metadata all [input.webp] -o [output.webp]", CC.RED)
-        
-        for _ in tqdm(FILES["webp"], "WEBP Phase 1", len(FILES["webp"]), unit="files") :
-            tmp = _ + ".tmp.webp"
-            subprocess.run(["cwebp", "-lossless", "-z", "9", "-m", "6", "-metadata all", _, "-o", tmp],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            if os.path.exists(tmp):
-                if os.path.getsize(tmp) < os.path.getsize(_):
-                    os.replace(tmp, _)  # atomic replace
-                else:
-                    os.remove(tmp)
-            OPT_SIZE["webp"] += os.path.getsize(_)
+        try :
+            #WEBP phase 1
+            log("Processing WEBPs", CC.INFO)
+            log("n>> cwebp -lossless -z 9 -m 6 -metadata all [input.webp] -o [output.webp]", CC.RED)
 
-        Print_Stat("WEBP Phase 1 Completed", BASE_SIZE["webp"], OPT_SIZE["webp"])
+            for _ in tqdm(FILES["webp"], "WEBP Phase 1", len(FILES["webp"]), unit="files") :
+                tmp = _ + ".tmp.webp"
+                subprocess.run(["cwebp", "-lossless", "-z", "9", "-m", "6", "-metadata all", _, "-o", tmp],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                if os.path.exists(tmp):
+                    if os.path.getsize(tmp) < os.path.getsize(_):
+                        os.replace(tmp, _)  # atomic replace
+                    else:
+                        os.remove(tmp)
+                OPT_SIZE["webp"] += os.path.getsize(_)
+
+            Print_Stat("WEBP Phase 1 Completed", BASE_SIZE["webp"], OPT_SIZE["webp"])
+        except Exception as e :
+            log(f"Error {e}", CC.RED)
     
     OPT_SIZE["total"] += OPT_SIZE["jpg"] + OPT_SIZE["png"] + OPT_SIZE["webp"]
     log(f"Total Files : {FILES['total']}", CC.YELLOW)

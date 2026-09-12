@@ -31,6 +31,7 @@ These programs are actually called by the Python scripts and will fail without t
                     🟡 OPTIONAL PROGRAMS (Enhanced Functionality)
 ================================================================================
 These programs enhance specific features. Some scripts may work without them.
+Some scripts still required them though.
 
 ENCODERS (Video)
  libaom-av1    : aomenc.exe (AV1 encoding)
@@ -44,12 +45,9 @@ PARTIAL / FULL LIBRARIES (Image)
    Prober     : jxlinfo.exe (0.12.0+)
 
 OPTIMIZERS (Image Compression)
- jpg/png      : ect.exe (Zen3 Optimized)
- jpg          : jpegoptim.exe / zopfli.exe
- png          : oxipng.exe / zopflipng.exe
-
-OTHER TOOLS
- ninja        : ninja build tool (for fast builds)
+ jpg/png      : ect.exe
+ jpg          : jpegoptim.exe
+ png          : oxipng.exe
 
 ================================================================================
                     🔵 SCRIPT COMMANDS (Batch/PowerShell)
@@ -68,15 +66,6 @@ Restart Explorer       : restartexplorer.bat
 Convert To MP4         : tomp4.bat
 Download YouTube video : ytdl.ps1
 Download YouTube audio : ytmdl.ps1
-
-================================================================================
-                    🟣 CUSTOM CODE (Security Tools)
-================================================================================
-Advanced tools with elevated privileges (use with caution).
-
-Permission             : escalate.exe
-Pathdumping            : PathDump.exe
-File randomizer        : Random.exe
 
 ================================================================================
                     🟢 OPTIONAL/EXTERNAL PROGRAMS (NOT Python packages)
