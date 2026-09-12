@@ -7,11 +7,11 @@
 # =============================================================================
 
 # Image Processing & PDF Creation
-pillow==10.1.0
-pymupdf==1.23.46
+pillow>=12.3.0
+pymupdf>=1.28.2
 
 # Progress Bar
-tqdm==4.66.1
+tqdm>=4.70.1
 
 # =============================================================================
 # OPTIONAL/EXTERNAL PROGRAMS (NOT Python packages)

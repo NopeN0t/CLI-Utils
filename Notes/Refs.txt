@@ -1,39 +1,132 @@
-Encoders
- libaom-av1 		: aomenc.exe (3.13.0-rc1-69-gf2bfd0d38)
- libsvtav1		: SvtAv1EncApp.exe (3.0.2-B)
- libwebp 		: cwebp.exe (1.6.0)
+================================================================================
+                    CLI Utils - Required Programs Reference
+================================================================================
+This document lists all programs that should exist on your system for CLI Utils
+to function properly. Programs are categorized by their purpose.
 
-Partial / Full Libraries
- libjxl (jpegxl)	: Version 0.12.0
-   Encoder 		: cjxl.exe
-   Decoder 		: djxl.exe
-   Prober		: jxlinfo.exe
+================================================================================
+                    🔴 REQUIRED BY PYTHON SCRIPTS (Must Install)
+================================================================================
+These programs are actually called by the Python scripts and will fail without them.
 
-Optimizer
- jpg/png 		: ect.exe (Zen3 Optimized)
- jpg 			: jpegoptim.exe / zopfli.exe
- png 			: oxipng.exe / zopflipng.exe
+1. ffmpeg.exe - Video encoding/decoding/transcoding
+   - Version: Latest (use winget for auto-update)
+   - Install: winget install ffmpeg
+   - Used by: ffcomp.py, ffcompare.py, ffcover.py, mkpdf.py, fffunctions.py
+   - Required for: Video compression, cover art embedding, format conversion
 
-Others
- ninja			: ninja build tool
+2. 7-Zip (7z.exe) - Archive extraction/compression
+   - Version: Latest (use winget for auto-update)
+   - Install: winget install 7zip
+   - Used by: archive-extractor.py
+   - Required for: Archive file extraction
 
-Script
- Add this folder to PATH : AddToPath_CLI Utils.bat
- Compress video 	: ffcomp.exe
- Comapre Media 		: ffcompare.exe
- Edit Media Cover 	: ffcover.exe
- ff debugcode		: fffunctions.exe
- list file type + size	: filelist.exe
- Optimize Image 	: imgopt.exe
- PDF <-> Image 		: mkpdf.exe
- Restart Explorer 	: restartexplorer.bat
- Convert To MP4		: tomp4.bat
- Download YouTube video	: ytdl.ps1
- Download YouTube audio : ytmdl.ps1
+3. EXIFTool - Metadata extraction/embedding
+   - Version: Latest (use winget for auto-update)
+   - Install: winget install exiftool
+   - Used by: imgconv.py, mkpdf.py, ffcover.py, MetaDupe.py
+   - Required for: Metadata operations on images and videos
 
+================================================================================
+                    🟡 OPTIONAL PROGRAMS (Enhanced Functionality)
+================================================================================
+These programs enhance specific features. Some scripts may work without them.
 
-Custom Code
- Permission 		: escalate.exe
- Pathdumping 		: PathDump.exe
- File randomizer 	: Random.exe
- 
+ENCODERS (Video)
+ libaom-av1    : aomenc.exe (AV1 encoding)
+ libsvtav1    : SvtAv1EncApp.exe (SVT-AV1 encoding)
+ libwebp      : cwebp.exe (1.6.0+) - WebP compression
+
+PARTIAL / FULL LIBRARIES (Image)
+ libjxl (JPEG XL)
+   Encoder    : cjxl.exe (0.12.0+)
+   Decoder    : djxl.exe (0.12.0+)
+   Prober     : jxlinfo.exe (0.12.0+)
+
+OPTIMIZERS (Image Compression)
+ jpg/png      : ect.exe (Zen3 Optimized)
+ jpg          : jpegoptim.exe / zopfli.exe
+ png          : oxipng.exe / zopflipng.exe
+
+OTHER TOOLS
+ ninja        : ninja build tool (for fast builds)
+
+================================================================================
+                    🔵 SCRIPT COMMANDS (Batch/PowerShell)
+================================================================================
+These are executable scripts within the project folder.
+
+Add this folder to PATH : AddToPath_CLI Utils.bat
+Compress video         : ffcomp.exe
+Compare Media          : ffcompare.exe
+Edit Media Cover       : ffcover.exe
+ff debugcode           : fffunctions.exe
+List file type + size  : filelist.exe
+Optimize Image         : imgopt.exe
+PDF <-> Image          : mkpdf.exe
+Restart Explorer       : restartexplorer.bat
+Convert To MP4         : tomp4.bat
+Download YouTube video : ytdl.ps1
+Download YouTube audio : ytmdl.ps1
+
+================================================================================
+                    🟣 CUSTOM CODE (Security Tools)
+================================================================================
+Advanced tools with elevated privileges (use with caution).
+
+Permission             : escalate.exe
+Pathdumping            : PathDump.exe
+File randomizer        : Random.exe
+
+================================================================================
+                    🟢 OPTIONAL/EXTERNAL PROGRAMS (NOT Python packages)
+================================================================================
+These are compiled programs that are executed as subprocesses.
+They are NOT Python dependencies but must be installed separately.
+
+Image Optimizers (External executables)
+ - oxipng.exe   - PNG optimization
+ - ect.exe      - EXIF extraction (likely external tool)
+ - jpegoptim.exe - JPEG optimization
+ - cwebp.exe    - WEBP compression (libwebp)
+ - cjxl.exe     - JPEG-XL conversion
+
+================================================================================
+                    📋 QUICK INSTALL COMMANDS (Windows)
+================================================================================
+
+# Install all required programs
+winget install ffmpeg
+winget install 7zip
+winget install exiftool
+
+# Optional: Install image optimizers
+winget install oxipng
+winget install zopfli
+
+# Verify installations
+ffmpeg -version
+7z -v
+exiftool --version
+
+================================================================================
+                    ⚠️  NOTES
+================================================================================
+- .exe files are NOT committed to git (see .gitignore)
+- Programs listed under "REQUIRED" will cause errors if missing
+- Programs listed under "OPTIONAL" provide enhanced features
+- Always use latest versions via winget for security updates
+- Add project folder to PATH or use full paths in scripts
+
+================================================================================
+                    📁 FILE STRUCTURE
+================================================================================
+Project root contains:
+- Scripts/         : Python scripts (.py)
+- Scripts/Colors/  : Color console modules
+- Scripts/Functions/ : Reusable Python functions
+- Scripts/Projects/ : Project-specific sub-tools
+- Notes/           : Documentation (Refs.txt, python_requirements.txt)
+- .gitignore       : Git ignore rules (*.exe, *.aes, *.dll, __pycache__)
+
+================================================================================
