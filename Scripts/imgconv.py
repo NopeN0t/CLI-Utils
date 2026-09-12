@@ -20,8 +20,8 @@ PROGRAM = "imgconv"
 def log(msg : str, Color = CC.RESET) -> None :
     print(f"{Color}[{PROGRAM}] {msg}{CC.RESET}")
 
-def process_file(task : tuple[Path, EncoderPreset, str, bool]) -> tuple[Path, int, int] :
-    path, preset, fmt, keep = task
+def process_file(task : tuple[Path, EncoderPreset, str, bool, bool]) -> tuple[Path, int, int] :
+    path, preset, fmt, keep, ignore_size = task
     before = path.stat().st_size
     after = -1
 
@@ -41,6 +41,12 @@ def process_file(task : tuple[Path, EncoderPreset, str, bool]) -> tuple[Path, in
              log(f"Failed to duplicate metadata of {path}", CC.BLUE)
 
         after = output.stat().st_size
+
+        #Prevent larger output
+        if after > before :
+            log("Output is larger than original file",CC.INFO)
+            if not ignore_size :
+                output.unlink() #This make output nolonger exists
         
         if not keep and output.exists() :
             path.unlink()
@@ -56,7 +62,8 @@ def Main() :
     parser.add_argument("-r", "--recursive", action="store_true", help="Enable Recursive Search")
     parser.add_argument("-f", "--format", required=True, choices=Supports.formats(), help="Supported Formats (Encoder must exists)")
     parser.add_argument("-p", "--preset", type=ProgramPresets, choices=ProgramPresets.Presets(), default=ProgramPresets.Default, help="Preset for encoder")
-    parser.add_argument("-k", "--keep", action="store_true", help="Keep converted files")
+    parser.add_argument("-k", "--keep", action="store_true", help="Keep original files")
+    parser.add_argument("-is", "--ignore_size", action="store_true", help="Keep converted results if output is bigger")
     parser.add_argument("-t", "--threads", type=int, 
                         default=cpu_count() - 2 if cpu_count() > 2 else 1, #Left threads unused to prevent global OS lag
                         help="Maximum number of parallelism, Default = Max threads - 2")
@@ -80,7 +87,7 @@ def Main() :
     log(f"Converting to {args.format} using {preset_str} preset", CC.INFO)
 
     tasks = [
-         (path, PRESET, args.format, args.keep)
+         (path, PRESET, args.format, args.keep, args.ignore_size)
          for path in PATHS
     ]
 
