@@ -1,262 +1,196 @@
-# CLI Utils
+# CLI Utils 🛠️
 
-A collection of command-line utility tools with Python automation scripts.
+A comprehensive CLI utility suite for media processing, file management, and system operations on Windows.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
+[![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)](https://www.microsoft.com/windows)
 
 ## 📋 Table of Contents
 
-- [Overview](#overview)
-- [Installation](#installation)
-- [Directory Structure](#directory-structure)
-- [Usage](#usage)
-- [Scripts](#scripts)
+- [Features](#-features)
+- [Requirements](#-requirements)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Scripts](#-scripts)
+- [External Programs](#-external-programs)
+- [License](#-license)
+- [Credits](#-credits)
 - [Notes](#notes)
-- [Contributing](#contributing)
-- [License](#license)
 
----
+## ✨ Features
 
-## 📋 Overview
+### Video Processing
+- **Compression** - Optimize video files with adjustable CRF/bitrate
+- **Comparison** - Analyze and compare video quality
+- **Cover Art** - Embed, extract, or remove cover art from videos
+- **FFmpeg Integration** - Leverage powerful FFmpeg capabilities
 
-**CLI Utils** is a utility collection that provides:
-- **Executable callers** (`.exe` files) - Spawn processes and pass parameters
-- **Python automation scripts** - Manage, invoke, and orchestrate the executables
-- **Path integration** - The project root directory is added to `%PATH%` for easy access
+### Image Optimization
+- **Lossless Compression** - Optimize PNG, JPG, and WEBP files
+- **Multiple Optimizers** - oxipng, ect, jpegoptim, cwebp
+- **Batch Processing** - Process multiple files simultaneously
+- **Metadata Handling** - Preserve or manipulate EXIF data
 
-### 🎯 Key Features
+### PDF Creation
+- **Image to PDF** - Convert images to PDF documents
+- **Metadata Embedding** - Add metadata to PDF files
+- **Cross-platform Support** - Works with various image formats
 
-| Feature | Description |
-|---------|-------------|
-| **Executable Callers** | `.exe` files that wrap Python scripts |
-| **Python Automation** | Python scripts in `/Scripts/` for orchestration |
-| **Path Integration** | Project root added to `%PATH%` environment variable |
-| **Multi-format Support** | Supports batch (`.bat`) and PowerShell (`.ps1`) automation |
+### Archive Management
+- **7-Zip Integration** - Extract and compress archive files
+- **File Listing** - List and analyze file types and sizes
 
----
+### System Utilities
+- **File Operations** - Move, copy, and manage files
+- **Path Management** - Handle file paths efficiently
+- **Console Enhancement** - Colored console output
 
-## 📥 Installation
-
-### Prerequisites
-
-- Python 3.x (for scripts)
-- Visual Studio C++ Redistributable (for `.exe` dependencies)
-- Windows 10/11 (Windows-specific tools)
-
-### Setup
-
-1. **Clone/Extract** the project
-2. **Verify dependencies**: Ensure all `.exe` files are present
-3. **Add to PATH**: The project root is automatically added to `%PATH%`
-
----
-
-## 📁 Directory Structure
-
-```
-CLI Utils/
-├── .gitignore              # Git ignore rules
-├── .vscode/                # VS Code configuration
-├── Notes/                   # Text files and references
-│   └── Refs.txt            # Documentation references
-├── Scripts/                 # Python automation scripts
-│   ├── archive-extractor.py
-│   ├── CLI Utils.code-workspace
-│   ├── Code Base/          # Source code (optional)
-│   ├── Colors/             # Console utilities
-│   ├── deb.py
-│   ├── ffcomp.py
-│   ├── ffcompare.py
-│   ├── ffcover.py
-│   ├── filelist.py
-│   ├── Functions/          # Helper functions
-│   │   ├── Checkers.py
-│   │   ├── fffunctions.py
-│   │   ├── ffpresets.py
-│   │   └── helpers.py
-│   ├── imgconv.py
-│   ├── mkpdf.py
-│   ├── movin.py
-│   ├── Projects/           # Project-specific scripts
-│   │   └── imgconv/
-│   │       ├── Path_Builder.py
-│   │       └── Program_Check.py
-│   ├── Runner.aes          # Encryption utility
-│   └── [various .py files] # Automation scripts
-├── [exe files]              # Executable callers (see Usage)
-└── [batch/ps1 scripts]      # Windows automation
-```
-
-### 📂 Directory Purpose
-
-| Directory | Purpose |
-|-----------|---------|
-| `Scripts/` | **Active Python scripts** (not source code) |
-| `Notes/` | Documentation, references, and text files |
-| Root | `.exe` files and PATH integration |
-
----
-
-## 🚀 Usage
-
-### Executable Callers
-
-Each `.exe` file acts as a **caller** that:
-- Spawns a Python process
-- Passes parameters to the corresponding Python script
-- Executes the automation task
-
-### Execution Pattern
-
-```bash
-# Basic usage
-python "./Scripts/[exe name]" [Parameters]
-
-# Example
-python "./Scripts/filelist.py" --list --output results.txt
-
-# Or directly invoke the exe file
-filelist.exe --list --output results.txt
-```
-
-### Common Executables
-
-| Executable | Description |
-|------------|-------------|
-| `ffcomp.exe` | FFmpeg compression |
-| `ffcompare.exe` | FFmpeg comparison |
-| `ffcover.exe` | FFmpeg cover extraction |
-| `imgconv.exe` | Image conversion |
-| `imgopt.exe` | Image optimization |
-| `mkpdf.exe` | PDF generation |
-| `movin.exe` | File movement |
-| `zopfli.exe` | Compression |
-| `zopflipng.exe` | PNG compression |
-| `oxipng.exe` | PNG optimization |
-| `cjxl.exe` | JPEG-XL conversion |
-| `aomenc.exe` | AV1 encoding |
-| `PathDump.exe` | Path dumping |
-| `filelist.exe` | File listing |
-| `random.exe` | Random utilities |
-| `deb.exe` | Deb package creation |
-| `SvtAv1EncApp.exe` | SVT-AV1 encoding |
-
----
-
-## 🐍 Scripts
-
-### Script Organization
-
-#### `/Scripts/Functions/`
-Contains helper functions and utilities:
-- `Checkers.py` - Validation and checking utilities
-- `fffunctions.py` - FFmpeg-specific functions
-- `ffpresets.py` - FFmpeg preset configurations
-- `helpers.py` - General helper functions
-
-#### `/Scripts/Colors/`
-Console color utilities:
-- `ConsoleColors.py` - ANSI color formatting
-
-#### `/Scripts/Projects/`
-Project-specific implementations:
-- `imgconv/` - Image conversion project
-
-#### `/Scripts/Code Base/`
-Optional source code (not active scripts):
-- `762MB Bomb.cpp` - Performance test
-- `luncher.cpp` - Launcher source
-- `TEST.py` - Test suite
-
----
-
-## 📝 Notes
-
-Located in `/Notes/`:
-- **Refs.txt** - Reference documentation and links
-- Additional text files for project references
-
----
-
-## 🔧 Automation Scripts
-
-### Batch Files (`.bat`)
-- `AddToPath_CLI Utils.bat` - Adds project to PATH
-- `tomp4.bat` - Convert to MP4
-- `restartexplorer.bat` - Restart Explorer
-
-### PowerShell Scripts (`.ps1`)
-- `ytdl.ps1` - YouTube downloader
-- `ytmdl.ps1` - YouTube Media Downloader
-
----
-
-## 🛠️ Development
+## 📋 Requirements
 
 ### Python Dependencies
-
-Check `Scripts/` directory for specific requirements. Most scripts use:
-- Standard Python library
-- Additional dependencies as needed
-
-### Testing
-
-Test scripts individually:
 ```bash
-# Test a single script
-python "./Scripts/filelist.py" --help
-
-# Run with specific parameters
-python "./Scripts/imgconv.py" --input image.jpg --output output.jpg
+pip install pillow==12.3.0 pymupdf==1.28.2 tqdm==4.70.1
 ```
 
-### Debugging
+### External Programs (Required)
+| Program | Purpose | Install Command |
+|---------|---------|-----------------|
+| `ffmpeg` | Video encoding/decoding | `winget install ffmpeg` |
+| `7-Zip` | Archive extraction | `winget install 7zip` |
+| `exiftool` | Metadata extraction | `winget install exiftool` |
 
-1. Check Python logs in `Scripts/`
-2. Use `python -v` for verbose output
-3. Enable debugging in VS Code (`.vscode/` folder)
+### Optional Programs (Enhanced Features)
+| Program | Purpose |
+|---------|---------|
+| `oxipng.exe` | PNG optimization |
+| `jpegoptim.exe` | JPEG optimization |
+| `cwebp.exe` | WEBP compression |
+| `cjxl.exe` | JPEG-XL conversion |
+| `ect.exe` | EXIF extraction |
+
+## 🚀 Installation
+
+### Step 1: Install Python
+Ensure Python 3.8+ is installed on your system.
+
+### Step 2: Install External Programs
+```powershell
+winget install ffmpeg
+winget install 7zip
+winget install exiftool
+```
+
+### Step 3: Install Python Dependencies
+```powershell
+pip install -r Notes/python_requirements.txt
+```
+
+### Step 4: Add to PATH (Optional)
+```powershell
+AddToPath_CLI Utils.bat
+```
+
+## 📖 Usage
+
+### Quick Start
+1. Clone the repository
+2. Activate virtual environment
+3. Install dependencies
+4. Run scripts from the Scripts folder
+
+### Example Commands
+```powershell
+# Image optimization
+python Scripts/imgopt.py -i "C:\Images"
+
+# Video compression
+python Scripts/ffcomp.py -i "C:\Videos"
+
+# Archive extraction
+python Scripts/archive-extractor.py -i "archive.zip" -o "extracted"
+
+# PDF creation
+python Scripts/mkpdf.py -i "images" -o "document.pdf"
+```
+
+## 📁 Scripts
+
+| Script | Description |
+|--------|-------------|
+| `imgopt.py` | Image optimization (PNG, JPG, WEBP) |
+| `ffcomp.py` | Video compression and encoding |
+| `ffcompare.py` | Video quality comparison |
+| `ffcover.py` | Cover art management |
+| `archive-extractor.py` | Archive file extraction |
+| `deb.py` | File management utilities |
+| `filelist.py` | File listing and analysis |
+| `imgconv.py` | Image format conversion |
+| `movin.py` | File movement operations |
+| `mkpdf.py` | PDF creation from images |
+
+## 🔧 External Programs
+
+See [`Notes/Refs.txt`](Notes/Refs.txt) for a complete list of all required and optional programs.
+
+### Installation Guide
+```powershell
+# Install all required programs
+winget install ffmpeg
+winget install 7zip
+winget install exiftool
+
+# Optional: Image optimizers
+winget install oxipng
+winget install zopfli
+
+# Verify installations
+ffmpeg -version
+7z -v
+exiftool --version
+```
+
+## 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+### Third-Party Dependencies
+- **pillow** - BSD 3-Clause License
+- **pymupdf** - BSD 3-Clause License
+- **tqdm** - MIT License
+
+All external programs (ffmpeg, 7-Zip, exiftool) are open source and MIT-friendly.
+
+## 🙏 Credits
+
+### Based On
+- FFmpeg - Video processing library
+- Pillow - Python imaging library
+- PyMuPDF - PDF manipulation
+- tqdm - Progress bar library
+
+### Tools
+- winget - Windows Package Manager
+- 7-Zip - Archive utility
+- EXIFTool - Metadata tool
+- oxipng - PNG optimizer
+- cwebp - WebP encoder
+
+## Notes
+- All executables are not included
+- I provided a luncher that can be used for lunching python scripts in Scripts/Code Base/luncher.cpp
+### How to use luncher
+- Building 
+```powershell
+g++ ./luncher.cpp -o luncher.exe 
+```
+- Place it inside root folder and rename it to match the script's name
+- Run it
+
+## 📄 Documentation
+
+- [References](Notes/Refs.txt) - Complete list of required programs
+- [Requirements](Notes/python_requirements.txt) - Python dependencies
+- [README.md](README.md) - This file
 
 ---
-
-## 🤝 Contributing
-
-### Guidelines
-
-1. **Add scripts to `/Scripts/`** (not root)
-2. **Create matching `.exe` callers** in root
-3. **Document in `/Notes/`** or README
-4. **Update PATH integration** if needed
-
-### Pull Request Requirements
-
-- ✅ Update `README.md`
-- ✅ Add to `/Notes/` if documentation exists
-- ✅ Test all functionality
-- ✅ Ensure Python dependencies are documented
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License.  
-See `/Notes/Refs.txt` for license details.
-
----
-
-## 📧 Support
-
-For issues or questions:
-1. Check `/Notes/Refs.txt` for documentation
-2. Review Python script error messages
-3. Use PowerShell/Command Prompt for debugging
-
----
-
-## 📚 References
-
-- **Python Documentation**: https://docs.python.org/
-- **FFmpeg**: https://ffmpeg.org/
-- **VS Code**: https://code.visualstudio.com/
-
----
-
-**Last Updated**: 2024  
-**Project Status**: Active Development
