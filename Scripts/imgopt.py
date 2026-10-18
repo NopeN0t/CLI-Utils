@@ -31,8 +31,7 @@ def run(args) :
         pass
     except Exception as e:
         print(f"[{PROGRAM}] An error has occored\n{e}\033[0m")
-    finally :
-        return args[-1]
+    return args[-1]
 
 def webp_type(path : Union[str, Path]) :
     with open(path, "rb") as f:

@@ -90,11 +90,14 @@ def BuildAudioPreset(preset: Preset) -> List[str]:
 
 def prompt_custom_preset(preset_type: str) -> Preset:
     """Interactive fallback for custom codec + params"""
-    codec = input(f"\033[38;5;46mEnter {preset_type} encoder (empty for 'copy'): \033[0m").strip()
-    params = input(f"\033[38;5;46mEnter {preset_type} FFmpeg params: \033[0m").strip()
+    GREEN = "\033[38;5;46m"
+    YELLOW = "\033[38;5;226m"
+    RESET = "\033[0m"
+    codec = input(f"{GREEN}Enter {YELLOW}{preset_type}{GREEN} encoder (empty for 'copy'): {RESET}").strip()
+    params = input(f"{GREEN}Enter {YELLOW}{preset_type}{GREEN} FFmpeg params: {RESET}").strip() if codec else "" #Skip this if codec is empty
     
     return Preset(
-        codec=codec if codec else "",
+        codec=codec if codec else "copy",
         base_params={},
         encoder_params={},
         rate_controls={},
@@ -103,19 +106,25 @@ def prompt_custom_preset(preset_type: str) -> Preset:
     )
 
 
-# Example usage matching your workflow:
+# Example usage workflow:
 if __name__ == "__main__":
-    vp = GetVideoPreset(VideoPreset.AV1_PLACEBO, VideoModifier.FPS_48 | VideoModifier.VFR | VideoModifier.BIT_10)
-    ap = GetAudioPreset(AudioPreset.COPY)
-    args = BuildVideoPreset(vp) + BuildAudioPreset(ap)
-    
-    # Simulate your subprocess.run() call
-    # import subprocess
-    # subprocess.run([
-    #     "ffmpeg", "-hide_banner", "-y", "-v", "error", "-stats",
-    #     "-i", ".\\X.mp4", "-map", "0", "-map", "-0:3",
-    #     "-c:s", "copy", "-c:d", "copy",
-    # ] + args + ["./X_out.mp4"])
+    sel = input("\033[38;5;50mType C for custom input\n\033[0m")
+    if sel.lower() == "c" :
+        vp = prompt_custom_preset("VideoPreset")
+        ap = prompt_custom_preset("AudioPreset")
+        args = BuildVideoPreset(vp) + BuildAudioPreset(ap)
+        
+    else :
+        vp = GetVideoPreset(VideoPreset.AV1_PLACEBO, VideoModifier.FPS_48 | VideoModifier.VFR | VideoModifier.BIT_10)
+        ap = GetAudioPreset(AudioPreset.COPY)
+        args = BuildVideoPreset(vp) + BuildAudioPreset(ap)
+
+        # import subprocess
+        # subprocess.run([
+        #     "ffmpeg", "-hide_banner", "-y", "-v", "error", "-stats",
+        #     "-i", ".\\X.mp4", "-map", "0", "-map", "-0:3",
+        #     "-c:s", "copy", "-c:d", "copy",
+        # ] + args + ["./X_out.mp4"])
 
     print(args)    
 

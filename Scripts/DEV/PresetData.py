@@ -112,8 +112,8 @@ COVER_PRESETS_REMOVE = {
     "OGG/OPUS" : '-map 0:a -map_metadata 1 -c copy'
 }
 
-FFMPEG = "ffmpeg -hide_banner -y"
-RATE_KEYS = [
+FFMPEG = ["ffmpeg", "-hide_banner", "-y"]
+RATE_KEYS = [ #Legacy data
     "-crf", "-b:v", "-minrate", "-maxrate",
     "-qp", "-qmin", "-qmax", "-bufsize"
 ]
