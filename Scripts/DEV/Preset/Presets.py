@@ -1,5 +1,5 @@
-from PresetData import VIDEO_PRESETS, AUDIO_PRESETS
-from PresetInfo import Preset, OptionValue
+from .PresetData import VIDEO_PRESETS, AUDIO_PRESETS
+from .PresetInfo import Preset, OptionValue
 from enum import IntFlag, StrEnum
 from typing import List
 import copy
@@ -31,7 +31,7 @@ class AudioPreset(StrEnum):
     OPUS_512K = "opus_512k"
     COPY = "copy"
 
-def GetVideoPreset(vp: VideoPreset, modifier: VideoModifier) -> Preset:
+def GetVideoPreset(vp: VideoPreset, modifier: VideoModifier = VideoModifier.NONE) -> Preset:
     base = copy.deepcopy(VIDEO_PRESETS[vp.value])
 
     if modifier & VideoModifier.FPS_48:
