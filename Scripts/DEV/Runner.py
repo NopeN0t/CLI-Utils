@@ -3,7 +3,7 @@ import shlex
 from pathlib import Path
 from typing import Union
 
-from Preset import FFMPEG, LogLevel
+from .Preset import FFMPEG, LogLevel
 
 def RunFFmpeg(
     inputs: Union[Path, str, list[Union[Path, str]]], 

@@ -1,4 +1,5 @@
 from .Analizer import VAnalizer, AAnalizer
+from .Comparator import Comparator
 
 __all__ = [
     #Video Analizer
@@ -6,4 +7,7 @@ __all__ = [
 
     #Audio Analizer
     "AAnalizer"
+
+    #Comparator
+    "Comparator"
 ]
