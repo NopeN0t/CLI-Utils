@@ -114,7 +114,7 @@ Project root contains:
 - Scripts/         : Python scripts (.py)
 - Scripts/Colors/  : Color console modules
 - Scripts/Functions/ : Reusable Python functions
-- Scripts/Projects/ : Project-specific sub-tools
+- Scripts/Libs/ : Project-specific sub-tools
 - Notes/           : Documentation (Refs.txt, python_requirements.txt)
 - .gitignore       : Git ignore rules (*.exe, *.aes, *.dll, __pycache__)
 

@@ -1,4 +1,4 @@
-from Projects.fftools.fffunctions import Comparator, VAnalizer
+from Libs.fftools.fffunctions import Comparator, VAnalizer
 from Functions.helpers import Alert, InputPath
 import sys, argparse
 if __name__ == "__main__" :

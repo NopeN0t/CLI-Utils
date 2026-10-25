@@ -8,9 +8,9 @@ import time
 
 #Custom Libs
 from Functions.helpers import Alert, ConvertTime, SizeToStr
-from Projects.imgconv.Program_Check import Supports, exiftool_Check
-from Projects.imgconv.Encoder_Presets import Encoder_Presets, EncoderPreset
-from Projects.imgconv.Program_Presets import ProgramPresets
+from Libs.imgconv.Program_Check import Supports, exiftool_Check
+from Libs.imgconv.Encoder_Presets import Encoder_Presets, EncoderPreset
+from Libs.imgconv.Program_Presets import ProgramPresets
 from Colors.ConsoleColors import ConsoleColors as CC
 from Functions.Image_Locator import LocateImages #This does image checking too
 from Functions.MetaDupe import MetaDupe_Image
