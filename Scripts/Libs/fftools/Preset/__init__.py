@@ -4,7 +4,7 @@ from .Presets import VideoPreset, VideoModifier, AudioPreset
 from .Presets import GetVideoPreset, GetAudioPreset, BuildVideoPreset, BuildAudioPreset, prompt_custom_preset
 from .PresetData import (
     VIDEO_PRESETS, AUDIO_PRESETS,
-    COVER_FORMATS, COVER_PRESETS_ADD, COVER_PRESETS_REMOVE,
+    COVER_FORMATS, AddCover, RemoveCover,
     FFMPEG, FFPROBE, LogLevel, RATE_KEYS
 )
 
@@ -23,6 +23,6 @@ __all__ = [
     "VIDEO_PRESETS", "AUDIO_PRESETS",
     
     # Cover & FFmpeg Defaults
-    "COVER_FORMATS", "COVER_PRESETS_ADD", "COVER_PRESETS_REMOVE",
+    "COVER_FORMATS", "AddCover", "RemoveCover",
     "FFMPEG", "FFPROBE", "LogLevel", "RATE_KEYS"
 ]
