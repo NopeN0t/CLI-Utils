@@ -4,6 +4,9 @@
 #caches
 *__pycache__
 
+#Universal Cases
+TMP.*
+
 #Special Cases
 *.exe
 *.aes
