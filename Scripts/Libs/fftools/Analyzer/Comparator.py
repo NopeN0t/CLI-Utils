@@ -7,20 +7,20 @@ import os
 
 class Comparator() :
     '''Collection of analyzers'''
-    def __init__(self, fast : bool = False, show_command : bool = False, capture_output : bool = False):
+    def __init__(self, fast : bool = False, show_command : bool = False, feedback : bool = False):
         '''
         A collection of analyzers for video
         
         :param fast: Enable fast mode (less precise)
         :type fast: bool (False)
-        :param hide_command: Don't show what command it's running
-        :type hide_command: bool (False)
+        :param show_command: Show what command it's running
+        :type show_command: bool (False)
         :param feedback: Show progress bar
         :type feedback: bool (True)
         '''
         self.sample = 2 if fast else 10
         self.show_command = show_command
-        self.capture_output = capture_output
+        self.feedback = feedback
         self.null_device = "NUL" if os.name == "nt" else "/dev/null"
     def get_vmaf(self, original : Union[str, Path], encoded : Union[str, Path], recursive : bool = False) -> float :
         '''
@@ -46,7 +46,7 @@ class Comparator() :
             ],
             loglevel=LogLevel.FATAL,
             show_command=self.show_command,
-            capture_output=self.capture_output
+            capture_output=self.feedback
         )
 
         score = 0
@@ -84,7 +84,7 @@ class Comparator() :
             ],
             loglevel=LogLevel.FATAL,
             show_command=self.show_command,
-            capture_output=self.capture_output
+            capture_output=self.feedback
         )
         values = []
         with open(statfile, "r", encoding="utf-8", errors="ignore") as f:
@@ -119,7 +119,7 @@ class Comparator() :
             ],
             loglevel=LogLevel.FATAL,
             show_command=self.show_command,
-            capture_output=self.capture_output
+            capture_output=self.feedback
         )
         ssim = 0.0
         with open(statfile, "r", encoding="UTF-8", errors="ignore") as f :
