@@ -6,7 +6,7 @@ from .ffpresets import (
 )
 from .fffunctions import (
     run, strip_all_rate_controls,
-    Comparator, VAnalizer,
+    Comparator, VAnalyzer,
     Extract_Cover, Remove_Cover, Add_Cover, Metadata_block_cover,
     V_Optimizer, AudioHelper
 )
@@ -23,7 +23,7 @@ __all__ = [
     "run", "strip_all_rate_controls",
 
     #Analyzers
-    "Comparator", "VAnalizer",
+    "Comparator", "VAnalyzer",
 
     #Cover
     "Extract_Cover", "Remove_Cover", "Add_Cover", "Metadata_block_cover",

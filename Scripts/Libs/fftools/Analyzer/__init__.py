@@ -1,12 +1,12 @@
-from .Analizer import VAnalizer, AAnalizer
+from .Analyzer import VAnalyzer, AAnalyzer
 from .Comparator import Comparator
 
 __all__ = [
     #Video Analizer
-    "VAnalizer",
+    "VAnalyzer",
 
     #Audio Analizer
-    "AAnalizer",
+    "AAnalyzer",
 
     #Comparator
     "Comparator"

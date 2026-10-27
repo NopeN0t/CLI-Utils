@@ -2,7 +2,7 @@ import os, sys, shutil, argparse
 import time
 from typing import Union
 from pathlib import Path
-from Libs.fftools.Legacy import Extract_Cover, Add_Cover, V_Optimizer, VAnalizer, run, FFMPEG, VIDEO_PRESETS, AUDIO_PRESETS
+from Libs.fftools.Legacy import Extract_Cover, Add_Cover, V_Optimizer, VAnalyzer, run, FFMPEG, VIDEO_PRESETS, AUDIO_PRESETS
 from Functions.helpers import GetFileSize, SizeToStr, Alert, InputPath, ConvertTime
 from Functions.Checkers import ffmpeg_Check
 
@@ -23,7 +23,7 @@ def process_video(file_path, a_preset, v_preset, optimize : str, args, target : 
 
     #encode
     OPT = V_Optimizer(v_preset, a_preset, target)
-    print(f"\033[38;5;50m[ffcomp] Encoding video... (Source frames {VAnalizer(file_path).frames})\033[0m")
+    print(f"\033[38;5;50m[ffcomp] Encoding video... (Source frames {VAnalyzer(file_path).frames})\033[0m")
     try : 
         if optimize == "c" : #Crf optimize (can fallback to bitrate optimize)
             OPT.CRF_Optimize(file_path, TMP, args.crf_base)

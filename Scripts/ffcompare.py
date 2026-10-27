@@ -1,4 +1,4 @@
-from Libs.fftools.Legacy import Comparator, VAnalizer
+from Libs.fftools.Legacy import Comparator, VAnalyzer
 from Functions.helpers import Alert, InputPath
 import sys, argparse
 if __name__ == "__main__" :
@@ -25,8 +25,8 @@ if __name__ == "__main__" :
         COMPARE = Comparator(False, True)
 
         if (args.verbose) :
-            base_analize = VAnalizer(Base)
-            comp_analize = VAnalizer(Comp)
+            base_analize = VAnalyzer(Base)
+            comp_analize = VAnalyzer(Comp)
             print(f"\033[38;5;50m[ffcompare] Base Frames {base_analize.frames}\033[0m")
             print(f"\033[38;5;50m[ffcompare] Base Bitrate {round(base_analize.bitrate, 2)}k\033[0m")
             print(f"\033[38;5;50m[ffcompare] Comp Frames {comp_analize.frames}\033[0m")

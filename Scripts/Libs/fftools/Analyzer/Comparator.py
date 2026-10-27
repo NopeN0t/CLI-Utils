@@ -6,10 +6,10 @@ import re
 import os
 
 class Comparator() :
-    '''Collection of analizer'''
+    '''Collection of analyzers'''
     def __init__(self, fast : bool = False, show_command : bool = False, capture_output : bool = False):
         '''
-        A collection of analizer for video
+        A collection of analyzers for video
         
         :param fast: Enable fast mode (less precise)
         :type fast: bool (False)
@@ -55,10 +55,10 @@ class Comparator() :
             score = data["pooled_metrics"]["vmaf"]["mean"]
         os.remove("vmaf.json")
 
-        if score < 65 and not recursive : #Low score (can caused by order of input)
-            print("\033[38;5;226m[vmaf] possible missmatch detected\033[0m")
+        if score < 65 and not recursive : #Low score (can be caused by order of input)
+            print("\033[38;5;226m[vmaf] possible mismatch detected\033[0m")
             
-            swapped = self.get_vmaf(encoded, original, True) #RECURSIVEEEE
+            swapped = self.get_vmaf(encoded, original, True) #RECURSIVE
             
             print(f"\033[38;5;226m[vmaf] base : {score}, swapped : {swapped}\033[0m")
             

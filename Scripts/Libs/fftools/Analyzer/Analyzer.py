@@ -23,8 +23,8 @@ class _ParseHelper() :
         except (TypeError, ValueError):
             return 0.0
 
-class VAnalizer() :
-    '''A fully self contained Video Analizer'''
+class VAnalyzer() :
+    '''A fully self contained Video Analyzer'''
     def __init__(self, file_path: Union[str, Path], track : int = 0):
         if isinstance(file_path, str) :
             file_path = Path(file_path)
@@ -58,7 +58,7 @@ class VAnalizer() :
         self.level = stream.get("level")
         self.width = _ph.safe_int(stream.get("width"))
         self.height = _ph.safe_int(stream.get("height"))
-        self.pix_fmt = _ph.stream.get("pix_fmt")
+        self.pix_fmt = _ph.safe_int(stream.get("pix_fmt"))
 
         self.fps = round(_ph.parse_ratio(stream.get("r_frame_rate", "0/1")), 4)
         self.avg_fps = round(_ph.parse_ratio(stream.get("avg_frame_rate", "0/1")), 4)
@@ -98,8 +98,8 @@ class VAnalizer() :
             f"bitrate={self.bitrate:.2f} kbps)"
         )
 
-class AAnalizer() :
-    '''A fully self contained Audio Analizer'''
+class AAnalyzer() :
+    '''A fully self contained Audio Analyzer'''
     def __init__(self, file_path: Union[str, Path], track : int = 0):
         if isinstance(file_path, str) :
             file_path = Path(file_path)
@@ -121,8 +121,8 @@ class AAnalizer() :
             text=True, encoding='utf-8', check=True
         )
         data = json.loads(result.stdout)
-        stream = data.get("streams", [{}])[0]
-        fmt = data.get("format", {})
+        self._stream = data.get("streams", [{}])[0]
+        self._fmt = data.get("format", {})
 
         # ========= Packet =========
         cmd_packets = [
@@ -130,7 +130,7 @@ class AAnalizer() :
             "-select_streams", f"a:{track}",
             "-show_entries", "packet=size,pts_time,duration_time",
             "-of", "json",
-            str(self._path),
+            str(file_path),
         ]
         result_packets = subprocess.run(
             cmd_packets,
@@ -138,8 +138,8 @@ class AAnalizer() :
             text=True, encoding='utf-8', check=True,
         )
         packets = json.loads(result_packets.stdout).get("packets", [])
-        packet_count = len(packets)
-        total_bytes = sum(int(p.get("size", 0) or 0) for p in packets)
+        self._packet_count = len(packets)
+        self._total_bytes = sum(int(p.get("size", 0) or 0) for p in packets)
         
         # Parse ffprobe JSON values (all numeric fields come back as strings)
         self._ph = _ParseHelper()
@@ -177,7 +177,7 @@ class AAnalizer() :
 
     def __repr__(self):
         return (
-            f"AAnalizer(codec={self.codec}, duration={self.duration}, "
+            f"AAnalyzer(codec={self.codec}, duration={self.duration}, "
             f"rate={self.sample_rate}Hz, ch={self.channels}, "
             f"frames={self.frames}, bitrate={self.bitrate_kbps:.2f} kbps)"
         )

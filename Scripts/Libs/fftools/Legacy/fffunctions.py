@@ -136,7 +136,7 @@ class Comparator() :
         os.remove(statfile)
         return ssim
 
-class VAnalizer() :
+class VAnalyzer() :
     '''A fully self contained Video Analizer'''
     def __init__(self, file_path: Union[str, Path]):
         '''
@@ -583,7 +583,7 @@ class V_Optimizer :
         TMP = f'{os.path.dirname(in_path)}//_TMP' #Temppath
         
         MIN_RATE = 50 #kbits
-        MAX_RATE = round(VAnalizer(in_path).bitrate)
+        MAX_RATE = round(VAnalyzer(in_path).bitrate)
         BEST_RATE = MAX_RATE
         BASE_RATE = MAX_RATE
         VMAF_TARGET = self.target
@@ -675,7 +675,7 @@ if __name__ == "__main__" :
     from Functions.helpers import InputPath
 
     f = InputPath("Input Path : ")
-    v_info = VAnalizer(f)
+    v_info = VAnalyzer(f)
     print(v_info)
     print(f"Frames {v_info.frames}")
     print(f"Bitrate {v_info.bitrate}kbps")
