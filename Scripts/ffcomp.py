@@ -1,6 +1,10 @@
 import os, sys, shutil, argparse
-from Libs.fftools.fffunctions import * #Scary
-from Functions.helpers import GetFileSize, SizeToStr, Alert, InputPath
+import time
+from typing import Union
+from pathlib import Path
+from Libs.fftools.Legacy import Extract_Cover, Add_Cover, V_Optimizer, VAnalizer, run, FFMPEG, VIDEO_PRESETS, AUDIO_PRESETS
+from Functions.helpers import GetFileSize, SizeToStr, Alert, InputPath, ConvertTime
+from Functions.Checkers import ffmpeg_Check
 
 # ==========================
 # Functions

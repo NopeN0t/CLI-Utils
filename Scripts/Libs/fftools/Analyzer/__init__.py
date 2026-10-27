@@ -3,10 +3,10 @@ from .Comparator import Comparator
 
 __all__ = [
     #Video Analizer
-    "VAnalizer"
+    "VAnalizer",
 
     #Audio Analizer
-    "AAnalizer"
+    "AAnalizer",
 
     #Comparator
     "Comparator"

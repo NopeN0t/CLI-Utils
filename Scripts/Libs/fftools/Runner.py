@@ -38,7 +38,7 @@ def RunFFmpeg(
 
 if __name__ == "__main__":
     # Example Usage
-    from Preset import GetVideoPreset, BuildVideoPreset, VideoPreset, VideoModifier
+    from .Preset import GetVideoPreset, BuildVideoPreset, VideoPreset, VideoModifier
     
     vp = GetVideoPreset(VideoPreset.AV1_VERY_FAST, VideoModifier.VFR)
     args = BuildVideoPreset(vp)
