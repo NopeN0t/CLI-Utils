@@ -1,8 +1,8 @@
 #Universal Imports
 from typing import Union, Optional
-from Libs.fftools.Legacy.ffpresets import *
-from Functions.helpers import log, ConvertTime
-from Functions.Checkers import ffmpeg_Check
+from .ffpresets import *
+from .helpers import log, ConvertTime
+from ..FFmpegCheck import ffmpeg_Check
 from pathlib import Path
 import os, json
 
