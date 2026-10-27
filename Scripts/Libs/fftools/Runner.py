@@ -3,7 +3,7 @@ import shlex
 from pathlib import Path
 from typing import Union
 
-from .Preset import FFMPEG, LogLevel
+from .Preset import FFMPEG, FFPROBE, LogLevel
 
 def RunFFmpeg(
     inputs: Union[Path, str, list[Union[Path, str]]], 
@@ -11,7 +11,8 @@ def RunFFmpeg(
     args: list[str], 
     loglevel: LogLevel = LogLevel.FATAL,
     show_command: bool = False,
-    capture_output: bool = False
+    capture_output: bool = False,
+    check: bool = True
 ) -> sp.CompletedProcess:
     '''Run FFmpeg command via subprocess.run()'''
     # Normalize inputs
@@ -33,7 +34,44 @@ def RunFFmpeg(
     
     if show_command:
         print(f"\033[31m\n>> {shlex.join(cmd)}\n\033[0m")
-    return sp.run(cmd, text=True, capture_output=capture_output, check=True)
+    return sp.run(
+        cmd, 
+        text=True, 
+        capture_output=capture_output, 
+        check=check
+    )
+
+
+def RunFFprobe(
+    inputs: Union[Path, str, list[Union[Path, str]]],
+    args: list[str] | None = None,
+    loglevel: LogLevel = LogLevel.INFO,
+    show_command: bool = False,
+    capture_output: bool = True,
+    check: bool = True
+) -> sp.CompletedProcess:
+    '''Run FFprobe command via subprocess.run().'''
+
+    input_paths = inputs if isinstance(inputs, list) else [inputs]
+    input_flags = [str(inp) for inp in input_paths]
+
+    cmd = [
+        *FFPROBE,
+        "-v", str(loglevel.value),
+        *(args or []),
+        *input_flags
+    ]
+
+    if show_command:
+        print(f"\033[31m\n>> {shlex.join(cmd)}\n\033[0m")
+
+    return sp.run(
+        cmd,
+        text=True,
+        capture_output=capture_output,
+        check=check
+    )
+
 
 
 if __name__ == "__main__":

@@ -114,6 +114,7 @@ COVER_PRESETS_REMOVE = {
 }
 
 FFMPEG = ["ffmpeg", "-hide_banner", "-y"]
+FFPROBE = ["ffprobe", "-hide_banner"]
 class LogLevel(IntEnum) :
     QUIET = -8
     PANIC = 0

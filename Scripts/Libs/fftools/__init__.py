@@ -1,10 +1,10 @@
-from .Runner import RunFFmpeg, LogLevel
+from .Runner import RunFFmpeg, RunFFprobe, LogLevel
 from .FFmpegCheck import ffmpeg_Check
 from .Functions import log
 
 __all__ = [
     #Runner
-    "RunFFmpeg", "LogLevel",
+    "RunFFmpeg", "RunFFprobe", "LogLevel",
 
     #Checker
     "ffmpeg_Check",
