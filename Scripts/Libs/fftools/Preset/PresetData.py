@@ -106,26 +106,26 @@ class AddCover(Enum) :
         '-map', '0:a', '-map', '1:v', 
         '-c:v', 'copy', '-c:a', 'copy', 
         '-disposition:v', 'attached_pic'
-    ], #Embed
+    ] #Embed
     MP3 = [
         '-map_metadata', '0', 
         '-map', '0:a', '-map', '1:v', 
         '-c:v', 'copy', '-c:a', 'copy', 
         '-metadata:s:v', 'comment="Cover (front)"', 
         '-id3v2_version', '3'
-    ], #Embed
+    ] #Embed
     MP4 = [
         '-map_metadata', '0', 
         '-map', '0', '-map', '1', 
         '-c', 'copy', '-disposition:v:1', 'attached_pic'
-    ],
+    ]
     OGG_OPUS = [
         '-c', 'copy', '-metadata', '"METADATA_BLOCK_PICTURE=&(base64 -w 0 cover.jpg)"'
     ] #This requried cover.jpg to exist in same folder (fallback)
 class RemoveCover(Enum) :
-    FLAC = ['-map', '0:a', '-c', 'copy', '-map_metadata', '0'],
-    MP3 = ['-map', '0:a', '-c', 'copy', '-map_metadata', '0'],
-    MP4 = ['-map', '0:a', '-map', '0:v:0', '-c', 'copy', '-map_metadata', '0'],
+    FLAC = ['-map', '0:a', '-c', 'copy', '-map_metadata', '0']
+    MP3 = ['-map', '0:a', '-c', 'copy', '-map_metadata', '0']
+    MP4 = ['-map', '0:a', '-map', '0:v:0', '-c', 'copy', '-map_metadata', '0']
     OGG_OPUS = ['-map', '0:a', '-map_metadata', '1', '-c', 'copy'] #This should also remove main video stream (BUG)
 
 FFMPEG = ["ffmpeg", "-hide_banner", "-y"]

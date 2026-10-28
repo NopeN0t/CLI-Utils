@@ -10,9 +10,10 @@ def RunFFmpeg(
     output: Union[Path, str, list[Union[Path, str]]],
     args: list[str], 
     loglevel: LogLevel = LogLevel.FATAL,
+    show_status: bool = True,
     show_command: bool = False,
     capture_output: bool = False,
-    check: bool = True
+    check: bool = True,
 ) -> sp.CompletedProcess:
     '''Run FFmpeg command via subprocess.run()'''
     # Normalize inputs
@@ -26,7 +27,7 @@ def RunFFmpeg(
     cmd = [
         *FFMPEG,
         "-v", str(loglevel.value),
-        "-stats",
+        * (["-stats"] if show_status else []),
         *input_flags,
         *args,
         *out_flags
@@ -41,7 +42,6 @@ def RunFFmpeg(
         check=check,
         encoding='UTF-8' # Ran into some japanese text and things breaks
     )
-
 
 def RunFFprobe(
     inputs: Union[Path, str, list[Union[Path, str]]],
