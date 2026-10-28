@@ -125,7 +125,7 @@ class AddCover(Enum) :
 class RemoveCover(Enum) :
     FLAC = ['-map', '0:a', '-c', 'copy', '-map_metadata', '0'],
     MP3 = ['-map', '0:a', '-c', 'copy', '-map_metadata', '0'],
-    MP4 = ['-map', '0:a', '-c', 'copy', '-map_metadata', '0'], #This remove main video stream (BUG)
+    MP4 = ['-map', '0:a', '-map', '0:v:0', '-c', 'copy', '-map_metadata', '0'],
     OGG_OPUS = ['-map', '0:a', '-map_metadata', '1', '-c', 'copy'] #This should also remove main video stream (BUG)
 
 FFMPEG = ["ffmpeg", "-hide_banner", "-y"]

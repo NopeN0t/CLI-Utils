@@ -38,7 +38,8 @@ def RunFFmpeg(
         cmd, 
         text=True, 
         capture_output=capture_output, 
-        check=check
+        check=check,
+        encoding='UTF-8' # Ran into some japanese text and things breaks
     )
 
 
@@ -69,7 +70,8 @@ def RunFFprobe(
         cmd,
         text=True,
         capture_output=capture_output,
-        check=check
+        check=check,
+        encoding='UTF-8' # Ran into some japanese text and things breaks
     )
 
 
