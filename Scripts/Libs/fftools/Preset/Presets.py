@@ -16,6 +16,10 @@ class VideoPreset(StrEnum):
     VP9_LOSSLESS = "vp9_lossless"
     COPY = "copy"
 
+    @classmethod
+    def Presets(cls) -> list[str] :
+        return [x.name.lower() for x in cls]
+
 class VideoModifier(IntFlag):
     NONE = 0
     FPS_48 = 1
@@ -31,21 +35,29 @@ class AudioPreset(StrEnum):
     OPUS_512K = "opus_512k"
     COPY = "copy"
 
+    @classmethod
+    def Presets(cls) -> list[str] :
+        return [x.name.lower() for x in cls]
+
+def ApplyVideoModifiers(
+    preset: Preset,
+    modifier: VideoModifier = VideoModifier.NONE
+) -> Preset:
+    if modifier & VideoModifier.FPS_48:
+        preset.filters["fps"] = "min(source_fps\\,48)" #I Don't know why but it must be like this to works
+
+    if modifier & VideoModifier.VFR:
+        preset.filters["mpdecimate"] = "hi=128:lo=32:frac=0.00005"
+        preset.base_params["fps_mode"] = "vfr"
+
+    if modifier & VideoModifier.BIT_10:
+        preset.base_params["pix_fmt"] = "yuv420p10le"
+
+    return preset
+
 def GetVideoPreset(vp: VideoPreset, modifier: VideoModifier = VideoModifier.NONE) -> Preset:
     base = copy.deepcopy(VIDEO_PRESETS[vp.value])
-
-    if modifier & VideoModifier.FPS_48:
-        base.filters["fps"] = "min(source_fps\\,48)" #I Don't know why but it must be like this to works
-        base.base_params["fps_mode"] = "vfr"
-        
-    if modifier & VideoModifier.VFR:
-        base.filters["mpdecimate"] = "hi=128:lo=32:frac=0.00005"
-        
-    if modifier & VideoModifier.BIT_10:
-        base.base_params["pix_fmt"] = "yuv420p10le"
-
-    return base
-
+    return ApplyVideoModifiers(base, modifier)
 def GetAudioPreset(ap: AudioPreset) -> Preset:
     return copy.deepcopy(AUDIO_PRESETS[ap.value])
 

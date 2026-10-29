@@ -7,7 +7,7 @@ import os
 
 class Comparator() :
     '''Collection of analyzers'''
-    def __init__(self, fast : bool = False, show_command : bool = False, feedback : bool = False):
+    def __init__(self, fast : bool = False, show_command : bool = False, show_status : bool = True):
         '''
         A collection of analyzers for video
         
@@ -15,12 +15,12 @@ class Comparator() :
         :type fast: bool (False)
         :param show_command: Show what command it's running
         :type show_command: bool (False)
-        :param feedback: Show progress bar
-        :type feedback: bool (True)
+        :param show_status: Show progress bar
+        :type show_status: bool (True)
         '''
         self.sample = 2 if fast else 10
         self.show_command = show_command
-        self.feedback = feedback
+        self.feedback = not show_status
         self.null_device = "NUL" if os.name == "nt" else "/dev/null"
     def get_vmaf(self, original : Union[str, Path], encoded : Union[str, Path], recursive : bool = False) -> float :
         '''

@@ -5,18 +5,21 @@ import json
 import re
 
 class _ParseHelper() :
+    @staticmethod
     def parse_ratio(value: str) -> float:
         if not value or value == "0/0":
             return 0.0
         num, den = value.split("/")
         return float(num) / float(den)
-    
+
+    @staticmethod
     def safe_int(value):
         try:
             return int(value) if value else 0
         except (TypeError, ValueError):
             return 0
-        
+
+    @staticmethod
     def safe_float(value):
         try:
             return float(value) if value else 0.0

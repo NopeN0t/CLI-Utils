@@ -1,4 +1,4 @@
-from Libs.fftools.Legacy import Comparator, VAnalyzer
+from Libs.fftools.Analyzer import Comparator, VAnalyzer
 from Functions.helpers import Alert, InputPath
 import sys, argparse
 if __name__ == "__main__" :
@@ -22,7 +22,7 @@ if __name__ == "__main__" :
         else :
             Comp = InputPath(args.compare, True)
 
-        COMPARE = Comparator(False, True)
+        COMPARE = Comparator(fast=False, show_command=False, show_status=False)
 
         if (args.verbose) :
             base_analize = VAnalyzer(Base)

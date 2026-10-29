@@ -195,7 +195,7 @@ class V_Optimizer :
         crf = CRF_BASE
         previous_crf = None
         previous_score = None
-        Comp = Comparator(False, True)
+        Comp = Comparator(fast=False, show_command=False)
         while True :
             out = f'{TMP_FOLDER}/{crf}.mp4'
             print(f"\033[38;5;50m[Optimizer] Attempting crf {crf} ({ConvertTime(START, time.perf_counter())})\033[0m")
@@ -206,7 +206,7 @@ class V_Optimizer :
                 inputs=file_c,
                 output=out,
                 args=[
-                    '-map_metadata', "0", "map", "0",
+                    '-map_metadata', "0", "-map", "0",
                     "-c:s", "copy", "-c:d", "copy",
                     *BuildAudioPreset(self.Apreset),
                     *BuildVideoPreset(self.Vpreset)

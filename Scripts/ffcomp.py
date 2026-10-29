@@ -1,16 +1,29 @@
-import os, sys, shutil, argparse
-import time
+import os, sys, shutil, argparse, time
 from typing import Union
 from pathlib import Path
-from Libs.fftools.Legacy import Extract_Cover, Add_Cover, V_Optimizer, VAnalyzer, run, FFMPEG, VIDEO_PRESETS, AUDIO_PRESETS
-from Functions.helpers import GetFileSize, SizeToStr, Alert, InputPath, ConvertTime
-from Functions.Checkers import ffmpeg_Check
+
+from Libs.fftools.Optimizers import V_Optimizer
+from Libs.fftools.Preset import (
+    VideoPreset, VideoModifier, GetVideoPreset, BuildVideoPreset,
+    AudioPreset, GetAudioPreset, BuildAudioPreset,
+    Preset, prompt_custom_preset, ApplyVideoModifiers
+)
+from Libs.fftools.Media import CoverManager
+from Libs.fftools import RunFFmpeg, ffmpeg_Check, ConvertTime, VAnalyzer, LogLevel
+
+from Functions.helpers import GetFileSize, SizeToStr, Alert, InputPath
+
+CM : CoverManager
 
 # ==========================
 # Functions
 # ==========================
 
-def process_video(file_path, a_preset, v_preset, optimize : str, args, target : float = 95) -> str:
+def process_video(
+        file_path, a_preset : Preset, v_preset : Preset, 
+        optimize : str, args, target : float = 95
+) -> str:
+    global CM
     BASE_PATH = os.path.dirname(file_path)
     FILE_NAME = os.path.splitext(os.path.basename(file_path))[0]
     COVER_PATH = f"{BASE_PATH}/{FILE_NAME}_cover.jpg"
@@ -19,27 +32,32 @@ def process_video(file_path, a_preset, v_preset, optimize : str, args, target : 
     optimize = optimize.lower()
     
     #Extract video cover (returns none if doesn't exists)
-    IDX = Extract_Cover(file_path, COVER_PATH, False, args.verbose)
+    IDX = CM.extract_cover(file_path, COVER_PATH)
 
     #encode
     OPT = V_Optimizer(v_preset, a_preset, target)
     print(f"\033[38;5;50m[ffcomp] Encoding video... (Source frames {VAnalyzer(file_path).frames})\033[0m")
+    
     try : 
         if optimize == "c" : #Crf optimize (can fallback to bitrate optimize)
             OPT.CRF_Optimize(file_path, TMP, args.crf_base)
         elif optimize == "b" : #Bitrate optimize (not recommend on ANY case)
             OPT.Bitrate_Optimize(file_path, TMP)
         else : #Regular encode
-            v_codec = VIDEO_PRESETS[v_preset]["codec"]
-            v_param = VIDEO_PRESETS[v_preset]["params"]
-            a_codec = AUDIO_PRESETS[a_preset]["codec"]
-            a_param = AUDIO_PRESETS[a_preset]["params"]
-            if IDX is None : #No cover art is found
-                run(f'{FFMPEG} -v error -stats -i "{file_path}" -map 0 -c:s copy '
-                    f'-c:d copy -c:a {a_codec} {a_param} -c:v {v_codec} {v_param} "{TMP}"',args.verbose)
-            else : #Cover art exists
-                run(f'{FFMPEG} -v error -stats -i "{file_path}" -map 0 -map -0:{IDX} -c:s copy '
-                    f'-c:d copy -c:a {a_codec} {a_param} -c:v {v_codec} {v_param} "{TMP}"',args.verbose)
+            RunFFmpeg(
+                inputs=file_path,
+                output=TMP,
+                args=[
+                    "-map", "0",
+                    *(["-map", f"-0:{IDX}"] if IDX is not None else []), # Cover art detection
+                    "-c:s", "copy", "-c:d", "copy",
+                    *BuildAudioPreset(a_preset),
+                    *BuildVideoPreset(v_preset)
+                ],
+                loglevel=LogLevel.ERROR,
+                show_status=True,
+                show_command=args.verbose
+            )
     except KeyboardInterrupt :
         print("[ffcomp] Ctrl + C Recived")
         for _ in (TMP, OUTPUT, COVER_PATH, "1Frame_Base.mp4") :
@@ -54,7 +72,7 @@ def process_video(file_path, a_preset, v_preset, optimize : str, args, target : 
     if os.path.exists(COVER_PATH) :
         try :
             print("\033[38;5;50m[ffcomp] Adding Cover picture\033[0m")
-            Add_Cover(TMP, COVER_PATH, OUTPUT, args.verbose)
+            CM.add_cover(TMP, COVER_PATH, OUTPUT)
             os.remove(COVER_PATH)
             os.remove(TMP)
         except Exception as e :
@@ -77,50 +95,116 @@ def Is_Bigger(INPUT_PATH : Union[str, Path], RESULT_PATH : Union[str, Path]) -> 
 def Main():
     #arguments
     parser = argparse.ArgumentParser(formatter_class= argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("-v", "--verbose", action="store_false", help="Show ffmpeg command while running")
-    parser.add_argument("-cb", "--crf_base", default=42, type=int, help="Set Starting CRF (CRF Optimizer)")
-    parser.add_argument("-vp", "--video_preset", default=-1, type=int, help="Select Video Preset")
-    parser.add_argument("-ap", "--audio_preset", default=-1, type=int, help="Select Audio Preset")
-    parser.add_argument("-o", "--optimize", default="", type=str, help="Optimization Mode (b : bitrate, c : crf, n : none)")
-    parser.add_argument("-t", "--target", default=-1, type=int, help="Optimize Target (vmaf score)")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Show ffmpeg command while running")
     parser.add_argument("-i", "--input", default="", type=str, help="Input path")
+    
+    parser.add_argument("-vp", "--video_preset", type=str, choices=VideoPreset.Presets(), help="Video Preset")
+    parser.add_argument("-fps", "--fps48", action="store_true", help="Cap FPS to 48")
+    parser.add_argument("-vfr", "--vfr", action="store_true", help="Use Variable Frame Rate (mpdecimate)")
+    parser.add_argument("-bit", "--bit10", action="store_true", help="Use 10-bit pixel format (yuv420p10le)")
+
+    parser.add_argument("-ap", "--audio_preset", type=str, choices=AudioPreset.Presets(), help="Audio Preset")
+    
+    parser.add_argument("-o", "--optimize", default="", type=str, help="Optimization Mode (b : bitrate, c : crf, n : none)")
+    parser.add_argument("-cb", "--crf_base", default=42, type=int, help="Set Starting CRF (CRF Optimizer)")
+    parser.add_argument("-t", "--target", default=-1, type=int, help="Optimize Target (vmaf score)")
+    
     args = parser.parse_args()
     del parser #Unload Parser
     
+    global CM
+    CM = CoverManager(show_command=False, verbose=args.verbose)
+
+    # ========== VIDEO PRESET ==========
     v_select = args.video_preset
-    if v_select == -1 :
-        for c,preset in enumerate(VIDEO_PRESETS) :
-            print(f"{c} : {preset}")
-        v_select = int(input("\033[38;5;46mSlect video preset:\033[0m").strip())
-    if v_select >= 0 and v_select < len(VIDEO_PRESETS) :
-        for c,preset in enumerate(VIDEO_PRESETS) :
-            if c == int(v_select) :
-                v_preset = preset
-                if preset == "custom" :
-                    custom_codec = input("\033[38;5;46mEnter ffmpeg encoder:\033[0m") 
-                    custom = input("\033[38;5;46mEnter ffmpeg params:\033[0m")
-                    VIDEO_PRESETS["custom"] = {"codec" : custom_codec, "params" : custom}
-    else :
-        print("\033[38;5;46mInvalid Choice\033[0m")
-        return
+    modifier = VideoModifier.NONE
     
+    # Preset selection
+    if v_select is None:
+        VPS = VideoPreset.Presets()
+    
+        for c, preset in enumerate(VPS):
+            print(f"{c} : {preset}")
+    
+        print(f"{len(VPS)} : custom")
+    
+        try:
+            choice = int(input("\033[38;5;46mSelect video preset:\033[0m ").strip())
+        except ValueError:
+            print("\033[38;5;46mInvalid Choice\033[0m")
+            return
+    
+        if choice == len(VPS):
+            v_preset = prompt_custom_preset("Video Preset")
+            v_select = None
+        elif 0 <= choice < len(VPS):
+            v_select = VPS[choice]
+        else:
+            print("\033[38;5;46mInvalid Choice\033[0m")
+            return
+    
+    # Collect CLI modifiers
+    if args.fps48:
+        modifier |= VideoModifier.FPS_48
+    
+    if args.vfr:
+        modifier |= VideoModifier.VFR
+    
+    if args.bit10:
+        modifier |= VideoModifier.BIT_10
+    
+    # Prompt for modifiers only when preset was not provided through CLI
+    if args.video_preset is None and v_select is not None:
+        if not args.fps48 and input("Enable 48 FPS? [y/N]: ").strip().lower() == "y":
+            modifier |= VideoModifier.FPS_48
+    
+        if not args.vfr and input("Enable VFR (drop similar frames)? [y/N]: ").strip().lower() == "y":
+            modifier |= VideoModifier.VFR
+    
+        if not args.bit10 and input("Enable 10-bit? [y/N]: ").strip().lower() == "y":
+            modifier |= VideoModifier.BIT_10
+
+    # Build preset
+    if v_select is not None:
+        if isinstance(v_select, str):
+            v_select = VideoPreset[v_select.upper()]
+    
+    v_preset = GetVideoPreset(v_select, modifier)
+
+    # ========== AUDIO PRESET ==========
     a_select = args.audio_preset
-    if a_select == -1 :
-        for c,preset in enumerate(AUDIO_PRESETS) :
-            print(f"{c} : {preset}")
-        a_select = int(input("\033[38;5;46mSlect audio preset:\033[0m").strip())
-    if a_select >= 0 and a_select < len(AUDIO_PRESETS) :
-        for c,preset in enumerate(AUDIO_PRESETS) :
-            if c == int(a_select) :
-                a_preset = preset
-                if preset == "custom" :
-                    custom_codec = input("\033[38;5;46mEnter ffmpeg encoder:\033[0m") 
-                    custom = input("\033[38;5;46mEnter ffmpeg params:\033[0m")
-                    AUDIO_PRESETS["custom"] = {"codec" : custom_codec, "params" : custom}
-    else :
-        print("\033[38;5;46mInvalid Choice\033[0m")
-        return
+
+    # Preset selection
+    if a_select is None:
+        APS = AudioPreset.Presets()
     
+        for c, preset in enumerate(APS):
+            print(f"{c} : {preset}")
+    
+        print(f"{len(APS)} : custom")
+    
+        try:
+            choice = int(input("\033[38;5;46mSelect audio preset:\033[0m ").strip())
+        except ValueError:
+            print("\033[38;5;46mInvalid Choice\033[0m")
+            return
+    
+        if choice == len(APS):
+            a_preset = prompt_custom_preset("Audio Preset")
+            a_select = None
+        elif 0 <= choice < len(APS):
+            a_select = APS[choice]
+        else:
+            print("\033[38;5;46mInvalid Choice\033[0m")
+            return
+
+    # Build preset
+    if a_select is not None:
+        if isinstance(a_select, str):
+            a_select = AudioPreset[a_select.upper()]
+
+    a_preset = GetAudioPreset(a_select)
+
     #Mode Select
     optimize = (args.optimize).strip().lower()
     target = args.target

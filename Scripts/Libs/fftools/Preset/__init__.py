@@ -1,7 +1,7 @@
 # fftools/Preset/__init__.py
 from .PresetInfo import Preset, OptionValue
 from .Presets import VideoPreset, VideoModifier, AudioPreset
-from .Presets import GetVideoPreset, GetAudioPreset, BuildVideoPreset, BuildAudioPreset, prompt_custom_preset
+from .Presets import GetVideoPreset, GetAudioPreset, BuildVideoPreset, BuildAudioPreset, prompt_custom_preset, ApplyVideoModifiers
 from .PresetData import (
     VIDEO_PRESETS, AUDIO_PRESETS,
     COVER_FORMATS, AddCover, RemoveCover,
@@ -16,7 +16,7 @@ __all__ = [
     "VideoPreset", "VideoModifier", "AudioPreset",
     
     # Core Functions
-    "GetVideoPreset", "GetAudioPreset",
+    "GetVideoPreset", "GetAudioPreset", "ApplyVideoModifiers"
     "BuildVideoPreset", "BuildAudioPreset", "prompt_custom_preset",
     
     # Preset Collections
