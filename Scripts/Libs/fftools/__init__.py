@@ -1,6 +1,6 @@
 from .Runner import RunFFmpeg, RunFFprobe, LogLevel
 from .FFmpegCheck import ffmpeg_Check
-from .Functions import log
+from .Functions import ConvertTime, log
 
 __all__ = [
     #Runner
@@ -10,5 +10,5 @@ __all__ = [
     "ffmpeg_Check",
 
     #Random Functions
-    "log"
+    "ConvertTime", "log"
 ]

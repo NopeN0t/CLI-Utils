@@ -1,6 +1,10 @@
 from .PresetInfo import Preset
 from enum import IntEnum, Enum
 
+MAX_CRF = {
+    63 : ["libaom-av1", "libsvtav1", "libvpx-vp9"],
+    51 : ["libx264", "libx265"]
+} 
 VIDEO_PRESETS = {
     "av1_placebo" : Preset(
         codec="libaom-av1",
@@ -141,8 +145,7 @@ class LogLevel(IntEnum) :
     DEBUG = 48
     TRACE = 56
 
-##Legacy Datas
 RATE_KEYS = [
-    "-crf", "-b:v", "-minrate", "-maxrate",
-    "-qp", "-qmin", "-qmax", "-bufsize"
+    "crf", "b:v", "minrate", "maxrate",
+    "qp", "qmin", "qmax", "bufsize"
 ]

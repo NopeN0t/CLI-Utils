@@ -5,7 +5,7 @@ from .Presets import GetVideoPreset, GetAudioPreset, BuildVideoPreset, BuildAudi
 from .PresetData import (
     VIDEO_PRESETS, AUDIO_PRESETS,
     COVER_FORMATS, AddCover, RemoveCover,
-    FFMPEG, FFPROBE, LogLevel, RATE_KEYS
+    FFMPEG, FFPROBE, LogLevel, RATE_KEYS, MAX_CRF
 )
 
 __all__ = [
@@ -13,7 +13,7 @@ __all__ = [
     "Preset", "OptionValue",
     
     # Enums
-    "VideoPreset", "VideoModifier", "AudioPreset", 
+    "VideoPreset", "VideoModifier", "AudioPreset",
     
     # Core Functions
     "GetVideoPreset", "GetAudioPreset",
@@ -21,8 +21,10 @@ __all__ = [
     
     # Preset Collections
     "VIDEO_PRESETS", "AUDIO_PRESETS",
-    
-    # Cover & FFmpeg Defaults
+
+    #Cover Module
     "COVER_FORMATS", "AddCover", "RemoveCover",
-    "FFMPEG", "FFPROBE", "LogLevel", "RATE_KEYS"
+   
+    # FFmpeg Values
+    "FFMPEG", "FFPROBE", "RATE_KEYS", "MAX_CRF", "LogLevel"
 ]
