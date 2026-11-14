@@ -1,32 +1,50 @@
 import argparse, sys, os, shutil, time, stat
 from Functions.helpers import Alert, SizeToStr
 from Colors.ConsoleColors import ConsoleColors as CC
+from typing import Dict, Any
 
 PROGRAM = "movin"
+NOW = time.time()
 SKIP_EXT = (".tmp", ".crdownload", ".part")
 
-def main() :
-    parser = argparse.ArgumentParser(formatter_class= argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("source", help="Source Folder")
-    parser.add_argument("destination", help="Where to move to")
-    parser.add_argument("-l", "--list", action="store_true", help="List file only")
+def Get_Arguments() ->  Dict[str, Any] :
+    parser = argparse.ArgumentParser(
+        description="Moves files between folders",
+        formatter_class= argparse.ArgumentDefaultsHelpFormatter
+    )
+        
+    parser.add_argument("source", metavar="SOURCE", help="Source Folder")
+    parser.add_argument("destination", metavar="DEST", help="Where to move to")
+    
+    parser.add_argument("-l", "--dry-run", action="store_true", help="List file only")
     parser.add_argument("-r", "--replace", action="store_true", help="Replace destination file")
     parser.add_argument("-fl", "--flatten", action="store_true", help="Do not preserve directory structure")
     parser.add_argument("-re", "--recursive", action="store_true", help="Enable Recursive Search")
-    parser.add_argument("-ls", "--listsize", action="store_true", help="Display file size when moving file")
-    parser.add_argument("-t", "--time", default=5, type=int, help="How much time difference is allowed (-1 to ignore)")
-    parser.add_argument("-s", "--size", default=-1, type=float, help="Minimum file size to move in MB (-1 to ignore)")
+    parser.add_argument("-ls", "--list-size", action="store_true", help="Display file size when moving file")
+    parser.add_argument("-t", "--max-age", metavar="MINUTES", default=5, type=int, help="How much time difference is allowed (-1 to ignore)")
+    parser.add_argument("-s", "--size", metavar="MB", default=-1, type=float, help="Minimum file size to move in MB (-1 to ignore)")
 
-    args = parser.parse_args()
-    SOURCE = args.source
-    DEST = args.destination
-    LISTSIZE = args.listsize
-    AGE_MINUTES = args.time
-    MIN_SIZE = args.size
+    return vars(parser.parse_args())
+
+def Scan_Files(source, recursive=False):
+    with os.scandir(source) as entries:
+        for entry in entries:
+            if entry.is_file(follow_symlinks=False):
+                yield entry.path, entry.stat(follow_symlinks=False)
+
+            elif recursive and entry.is_dir(follow_symlinks=False):
+                yield from Scan_Files(entry.path, True)
+
+def main() :
+    ARGS = Get_Arguments()
+    SOURCE = ARGS['source']
+    DEST = ARGS['destination']
+    LISTSIZE = ARGS['list_size']
+    AGE_MINUTES = ARGS['max_age']
+    MIN_SIZE = ARGS['size']
     TOTAL = 0
-    del parser #Unload Parser
 
-    if args.recursive:
+    if ARGS['recursive']:
         files = (
             os.path.join(root, name)
             for root, _, names in os.walk(SOURCE)
@@ -57,7 +75,7 @@ def main() :
         size_str = f" ({SizeToStr(st.st_size)})" if LISTSIZE else ""
         print(f"\033[38;5;46m[{PROGRAM}] {name}{size_str}\033[0m")
 
-        Move_File(src_path, SOURCE, DEST, args.replace, args.list, args.flatten, created)
+        Move_File(src_path, SOURCE, DEST, ARGS['replace'], ARGS['dry_run'], ARGS['flatten'], created)
         TOTAL += 1
 
     print(f"\033[38;5;226m[{PROGRAM}] Moved {TOTAL} files\033[0m")
@@ -72,7 +90,7 @@ def Valid_File(name : str, st : os.stat_result, age : int, size : float) -> bool
         return False
 
     # Age check
-    if age >= 0 and (time.time() - st.st_mtime) > age * 60 :
+    if age >= 0 and (NOW - st.st_mtime) > age * 60 :
         return False
 
     # Size check
