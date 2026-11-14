@@ -70,42 +70,6 @@ def Scan_Files(source, recursive=False):
                 continue
 
 
-def main():
-    ARGS = Get_Arguments()
-    SOURCE = ARGS["source"]
-    DEST = ARGS["destination"]
-    LISTSIZE = ARGS["list_size"]
-    AGE_MINUTES = ARGS["max_age"]
-    MIN_SIZE = ARGS["size"]
-    TOTAL = 0
-
-    created = set()  # Directories already created at destination
-    for src_path, st in Scan_Files(SOURCE, ARGS["recursive"]):
-        if not stat.S_ISREG(st.st_mode):
-            continue
-
-        name = os.path.basename(src_path)
-
-        if not Valid_File(name, st, AGE_MINUTES, MIN_SIZE):
-            continue
-
-        size_str = f" ({SizeToStr(st.st_size)})" if LISTSIZE else ""
-        print(f"\033[38;5;46m[{PROGRAM}] {name}{size_str}\033[0m")
-
-        Move_File(
-            src_path,
-            SOURCE,
-            DEST,
-            ARGS["replace"],
-            ARGS["dry_run"],
-            ARGS["flatten"],
-            created,
-        )
-        TOTAL += 1
-
-    print(f"\033[38;5;226m[{PROGRAM}] Moved {TOTAL} files\033[0m")
-
-
 def Valid_File(name: str, st: os.stat_result, age: int, size: float) -> bool:
     # Skip excluded extensions
     if os.path.splitext(name)[1].lower() in SKIP_EXT:
@@ -123,10 +87,17 @@ def Valid_File(name: str, st: os.stat_result, age: int, size: float) -> bool:
 
 
 def Move_File(
-    src, source_root, dest, replace=False, listfile=False, flatten=False, created=None
-):
+    src: str,
+    source_root: str,
+    dest: str,
+    replace=False,
+    listfile=False,
+    flatten=False,
+    created=None,
+) -> bool:
     if created is None:
         created = set()
+
     if flatten:
         dest_path = os.path.join(dest, os.path.basename(src))
     else:
@@ -162,6 +133,46 @@ def Move_File(
             shutil.move(src, dest_path)
         except OSError:
             print(f"[{PROGRAM}] Failed to move {dest_path}")
+            return False
+    return True
+
+
+def main():
+    ARGS = Get_Arguments()
+    SOURCE: str = ARGS["source"]
+    DEST: str = ARGS["destination"]
+    LISTSIZE: bool = ARGS["list_size"]
+    AGE_MINUTES: int = ARGS["max_age"]
+    MIN_SIZE: float = ARGS["size"]
+    TOTAL: int = 0
+    PROCESSED: int = 0
+
+    created = set()  # Directories already created at destination
+    for src_path, st in Scan_Files(SOURCE, ARGS["recursive"]):
+        if not stat.S_ISREG(st.st_mode):
+            continue
+
+        name = os.path.basename(src_path)
+
+        if not Valid_File(name, st, AGE_MINUTES, MIN_SIZE):
+            continue
+
+        size_str = f" ({SizeToStr(st.st_size)})" if LISTSIZE else ""
+        print(f"\033[38;5;46m[{PROGRAM}] {name}{size_str}\033[0m")
+
+        if Move_File(
+            src_path,
+            SOURCE,
+            DEST,
+            ARGS["replace"],
+            ARGS["dry_run"],
+            ARGS["flatten"],
+            created,
+        ):
+            PROCESSED += 1
+        TOTAL += 1
+
+    print(f"\033[38;5;226m[{PROGRAM}] Moved {PROCESSED}/{TOTAL} files\033[0m")
 
 
 if __name__ == "__main__":
