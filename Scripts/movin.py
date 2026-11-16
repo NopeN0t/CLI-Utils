@@ -1,4 +1,4 @@
-import argparse, sys, os, shutil, time, stat
+import argparse, sys, os, shutil, time
 from Functions.helpers import Alert, SizeToStr
 from Colors.ConsoleColors import ConsoleColors as CC
 from typing import Dict, Any
@@ -61,7 +61,10 @@ def Scan_Files(source, recursive=False):
         for entry in entries:
             try:
                 if entry.is_file(follow_symlinks=False):
-                    yield entry.path, entry.stat(follow_symlinks=False)
+                    # if os.path.splitext(entry.name)[1].lower() in SKIP_EXT:
+                    if entry.name.lower().endswith(SKIP_EXT): # This is faster but riskier
+                        continue
+                    yield entry, entry.stat(follow_symlinks=False)
 
                 elif recursive and entry.is_dir(follow_symlinks=False):
                     yield from Scan_Files(entry.path, True)
@@ -70,17 +73,13 @@ def Scan_Files(source, recursive=False):
                 continue
 
 
-def Valid_File(name: str, st: os.stat_result, age: int, size: float) -> bool:
-    # Skip excluded extensions
-    if os.path.splitext(name)[1].lower() in SKIP_EXT:
-        return False
-
+def Valid_File(st: os.stat_result, age_seconds: int, size_bytes: float) -> bool:
     # Modify date check
-    if age >= 0 and NOW - st.st_mtime > age * 60:
+    if age_seconds >= 0 and NOW - st.st_mtime > age_seconds:
         return False
 
     # File size check
-    if size >= 0 and st.st_size <= size * 1048576:
+    if size_bytes >= 0 and st.st_size <= size_bytes:
         return False
 
     return True
@@ -90,6 +89,7 @@ def Move_File(
     src: str,
     source_root: str,
     dest: str,
+    name: str,
     replace=False,
     listfile=False,
     flatten=False,
@@ -99,29 +99,34 @@ def Move_File(
         created = set()
 
     if flatten:
-        dest_path = os.path.join(dest, os.path.basename(src))
+        dest_path = os.path.join(dest, name)
     else:
         relative = os.path.relpath(src, source_root)
         dest_path = os.path.join(dest, relative)
 
-    # Create destination directories
-    dest_dir = os.path.dirname(dest_path)
-    if dest_dir not in created:
-        os.makedirs(dest_dir, exist_ok=True)
-        created.add(dest_dir)
+    if not listfile :
+        # Create destination directories
+        dest_dir = os.path.dirname(dest_path)
+        if dest_dir not in created:
+            os.makedirs(dest_dir, exist_ok=True)
+            created.add(dest_dir)
 
-    base, ext = os.path.splitext(dest_path)
+    base, ext = None 
     counter = 1
 
-    while os.path.exists(dest_path):
+    while os.path.exists(dest_path): # This spams filesystem when moving between 2 large folder
         CC.SetColor(CC.CYAN)
         print(f"[{PROGRAM}] Already Exists : {dest_path}")
 
         if replace:
-            os.remove(dest_path)
+            if not listfile :
+                os.remove(dest_path)
             print(f"[{PROGRAM}] Replacing : {dest_path}")
             break
 
+        if base is None :
+            base, ext = os.path.splitext(dest_path)
+        
         dest_path = f"{base}_{counter}{ext}"
         print(f"[{PROGRAM}] Attempting : {dest_path}")
         CC.SetColor(CC.RESET)
@@ -147,26 +152,25 @@ def main():
     TOTAL: int = 0
     PROCESSED: int = 0
 
+    age_max = AGE_MINUTES * 60
+    size_min = MIN_SIZE * 1048576
+
     created = set()  # Directories already created at destination
-    for src_path, st in Scan_Files(SOURCE, ARGS["recursive"]):
-        if not stat.S_ISREG(st.st_mode):
-            continue
-
-        name = os.path.basename(src_path)
-
-        if not Valid_File(name, st, AGE_MINUTES, MIN_SIZE):
+    for entry, st in Scan_Files(SOURCE, ARGS["recursive"]):
+        if not Valid_File(st, age_max, size_min):
             continue
 
         size_str = f" ({SizeToStr(st.st_size)})" if LISTSIZE else ""
-        print(f"\033[38;5;46m[{PROGRAM}] {name}{size_str}\033[0m")
+        print(f"\033[38;5;46m[{PROGRAM}] {entry.name}{size_str}\033[0m")
 
         if Move_File(
-            src_path,
+            entry.path,
             SOURCE,
             DEST,
+            entry.name,
             ARGS["replace"],
             ARGS["dry_run"],
-            ARGS["flatten"],
+            ARGS["flatten"] or not ARGS["recursive"], # Non recursive is equal to flatten
             created,
         ):
             PROCESSED += 1
