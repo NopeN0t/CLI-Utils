@@ -111,7 +111,8 @@ def Move_File(
             os.makedirs(dest_dir, exist_ok=True)
             created.add(dest_dir)
 
-    base, ext = None 
+    base = None 
+    ext = None
     counter = 1
 
     while os.path.exists(dest_path): # This spams filesystem when moving between 2 large folder
@@ -183,11 +184,11 @@ if __name__ == "__main__":
     try:
         main()
         sys.exit(0)
-    except KeyboardInterrupt:
-        sys.exit(1)
-    except Exception as e:
-        print(f"[{PROGRAM}] An error has occored\n{e}{CC.RESET}")
-        sys.exit(-1)
+    # except KeyboardInterrupt:
+    #     sys.exit(1)
+    # except Exception as e:
+    #     print(f"[{PROGRAM}] An error has occored\n{e}{CC.RESET}")
+    #     sys.exit(-1)
     finally:
         print(f"{CC.YELLOW}[{PROGRAM}] All done...{CC.RESET}")
         Alert()
